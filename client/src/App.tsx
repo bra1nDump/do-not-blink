@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useDebugValue, useEffect, useRef, useState } from "react";
 import { Client, Room } from "colyseus.js";
 import "./App.css";
 
@@ -70,6 +70,58 @@ export class MyRoomState extends Schema {
   @type({ map: Player }) players = new MapSchema<Player>();
 }
 
+interface RoomProps {
+  state: MyRoomState;
+  tryPlayCard: (handIndex: number, tableStackIndex: number) => void;
+}
+
+function RoomComponent(props: RoomProps) {
+  console.log("RoomComponent");
+
+  return (
+    <>
+      <button
+        onClick={async () => {
+          props.tryPlayCard(0, 0);
+        }}
+      >
+        Play card
+      </button>
+      <pre>{JSON.stringify(props.state, null, 2)}</pre>
+    </>
+  );
+}
+
+interface RoomClassProps {
+  room: Room<MyRoomState>;
+  tryPlayCard: (handIndex: number, tableStackIndex: number) => void;
+}
+
+class RoomClass extends React.Component<RoomClassProps, MyRoomState> {
+  constructor(props: RoomClassProps) {
+    super(props);
+    this.state = null;
+    props.room.onStateChange((state) => {
+      this.setState(state);
+    });
+  }
+
+  public render() {
+    return (
+      <>
+        <button
+          onClick={async () => {
+            this.props.tryPlayCard(0, 0);
+          }}
+        >
+          Play card
+        </button>
+        <pre>{JSON.stringify(this.state, null, 2)}</pre>
+      </>
+    );
+  }
+}
+
 function App() {
   const client = useRef(new Client("ws://localhost:2567"));
 
@@ -77,12 +129,34 @@ function App() {
   const [room, setRoom] = useState<Room<MyRoomState> | null>(null);
   const [roomState, setRoomState] = useState<MyRoomState | null>(null);
 
+  useEffect(() => {
+    if (room) {
+      const handleChange = (params: MyRoomState): void => {
+        setRoomState(params);
+        //room.removeAllListeners();
+        console.log(roomState);
+      };
+      //room.onStateChange(handleChange);
+      return () => {
+        //room.removeAllListeners();
+      };
+    }
+  }, [room, roomState]);
+
+  console.log(JSON.stringify(roomState, null, 2));
+
   return (
     <div className="App">
       <header className="App-header">
-        {roomState ? (
-          <RoomComponent
-            state={roomState}
+        {room ? (
+          // <RoomComponent
+          //   state={roomState}
+          //   tryPlayCard={(handIndex, tableStackIndex) => {
+          //     room.send("try play card", { handIndex, tableStackIndex });
+          //   }}
+          // />
+          <RoomClass
+            room={room}
             tryPlayCard={(handIndex, tableStackIndex) => {
               room.send("try play card", { handIndex, tableStackIndex });
             }}
@@ -106,9 +180,9 @@ function App() {
                   }
                 );
                 setRoom(roomL);
-                roomL.onStateChange((params) => {
-                  setRoomState(params);
-                });
+                // roomL.onStateChange((params) => {
+                //   setRoomState(params);
+                // });
               }}
             >
               Create room -
@@ -128,28 +202,6 @@ function App() {
         )}
       </header>
     </div>
-  );
-}
-
-interface RoomProps {
-  state: MyRoomState;
-  tryPlayCard: (handIndex: number, tableStackIndex: number) => void;
-}
-
-function RoomComponent(props: RoomProps) {
-  console.log("RoomComponent");
-
-  return (
-    <>
-      <button
-        onClick={async () => {
-          props.tryPlayCard(0, 0);
-        }}
-      >
-        Play card
-      </button>
-      <pre>{JSON.stringify(props.state, null, 2)}</pre>
-    </>
   );
 }
 
