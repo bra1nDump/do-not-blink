@@ -1,1 +1,1 @@
-{"cells":[{"kind":2,"languageId":"shellscript","value":"rm -fr .git","metadata":{}}]}
+{"cells":[{"kind":2,"languageId":"shellscript","value":"npm i @colyseus/schema","metadata":{}}]}

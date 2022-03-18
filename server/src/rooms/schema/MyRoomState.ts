@@ -12,9 +12,8 @@ export class Card extends Schema {
   @type("string") color: string;
 }
 
-export class Player extends Schema {
+export class Deck extends Schema {
   @type([Card]) deck: ArraySchema<Card>;
-  @type("string") name: string;
 
   constructor() {
     super();
@@ -35,6 +34,31 @@ export class Player extends Schema {
     this.deck = new ArraySchema<Card>(...cards);
   }
 }
+
+export class Player extends Deck {
+  @type("string") name: string;
+
+  constructor(name: string) {
+    super();
+    this.name = name;
+  }
+}
+
+export class TableStack extends Deck {
+  tryAdd(card: Card): boolean {
+    const top = this.deck.at(0);
+    if (
+      top.color === card.color ||
+      top.shape === card.shape ||
+      top.shapeCount === card.shapeCount
+    ) {
+      this.deck.unshift(card);
+      return true;
+    }
+    return false;
+  }
+}
+
 export class MyRoomState extends Schema {
   constructor(name: string) {
     super();
@@ -42,5 +66,7 @@ export class MyRoomState extends Schema {
   }
 
   @type("string") name: string;
+
+  @type([TableStack]) stacks = new ArraySchema<TableStack>();
   @type({ map: Player }) players = new MapSchema<Player>();
 }
