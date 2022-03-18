@@ -3,7 +3,7 @@ import { Client, Room } from "colyseus.js";
 import "./App.css";
 
 interface State {
-  mySynchronizedProperty: string;
+  name: string;
 }
 
 function App() {
