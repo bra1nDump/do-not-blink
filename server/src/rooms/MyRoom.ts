@@ -3,17 +3,19 @@ import { MyRoomState, Player, TableStack } from "./schema/MyRoomState";
 
 export class MyRoom extends Room<MyRoomState> {
   onCreate(options: any) {
-    super.roomId = options.roomName;
     this.setState(new MyRoomState(options.roomName));
 
-    this.onMessage("play card", (client, { sourceIndex, stackIndex }) => {
-      const playerDeck = this.state.players.get(client.id).deck;
-      const destinationStack = this.state.stacks.at(stackIndex);
-      if (destinationStack.tryAdd(playerDeck.at(sourceIndex))) {
-        // Successfully played card, removing from player
-        playerDeck.deleteAt(sourceIndex);
+    this.onMessage(
+      "try play card",
+      (client, { handIndex, tableStackIndex }) => {
+        const playerDeck = this.state.players.get(client.id).deck;
+        const destinationStack = this.state.stacks.at(tableStackIndex);
+        if (destinationStack.tryAdd(playerDeck.at(handIndex))) {
+          console.log("Successfully played card, removing from player");
+          playerDeck.deleteAt(handIndex);
+        }
       }
-    });
+    );
   }
 
   onJoin(client: Client, options: any) {

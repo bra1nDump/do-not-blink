@@ -74,13 +74,19 @@ function App() {
   const client = useRef(new Client("ws://localhost:2567"));
 
   const [roomName, setRoomName] = useState("");
+  const [room, setRoom] = useState<Room<MyRoomState> | null>(null);
   const [roomState, setRoomState] = useState<MyRoomState | null>(null);
 
   return (
     <div className="App">
       <header className="App-header">
         {roomState ? (
-          <RoomComponent state={roomState} />
+          <RoomComponent
+            state={roomState}
+            tryPlayCard={(handIndex, tableStackIndex) => {
+              room.send("try play card", { handIndex, tableStackIndex });
+            }}
+          />
         ) : (
           <>
             <div>Room name</div>
@@ -92,24 +98,28 @@ function App() {
             />
             <button
               onClick={async () => {
-                const room = await client.current.create<MyRoomState>(
+                const roomL = await client.current.create<MyRoomState>(
                   "my_room",
                   {
                     roomName,
                     playerName: "pp",
                   }
                 );
-                room.onStateChange(setRoomState);
+                setRoom(roomL);
+                roomL.onStateChange((params) => {
+                  setRoomState(params);
+                });
               }}
             >
-              Create room
+              Create room -
             </button>
             <button
               onClick={async () => {
-                const room = await client.current.joinById<MyRoomState>(
+                const roomL = await client.current.joinById<MyRoomState>(
                   roomName
                 );
-                room.onStateChange(setRoomState);
+                setRoom(roomL);
+                roomL.onStateChange(setRoomState);
               }}
             >
               Join room
@@ -123,10 +133,24 @@ function App() {
 
 interface RoomProps {
   state: MyRoomState;
+  tryPlayCard: (handIndex: number, tableStackIndex: number) => void;
 }
 
 function RoomComponent(props: RoomProps) {
-  return <pre>{JSON.stringify(props, null, 2)}</pre>;
+  console.log("RoomComponent");
+
+  return (
+    <>
+      <button
+        onClick={async () => {
+          props.tryPlayCard(0, 0);
+        }}
+      >
+        Play card
+      </button>
+      <pre>{JSON.stringify(props.state, null, 2)}</pre>
+    </>
+  );
 }
 
 export default App;
