@@ -126,7 +126,7 @@ interface RoomProps {
 }
 
 function RoomComponent(props: RoomProps) {
-  return <div>{JSON.stringify(props, null, 2)}</div>;
+  return <pre>{JSON.stringify(props, null, 2)}</pre>;
 }
 
 export default App;

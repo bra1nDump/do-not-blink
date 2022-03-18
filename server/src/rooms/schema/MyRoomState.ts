@@ -12,26 +12,30 @@ export class Card extends Schema {
   @type("string") color: string;
 }
 
+function genDeck(count: number) {
+  const cards = [...Array(count)].map(() => {
+    const card = new Card();
+    card.shape = [
+      "blizzard",
+      "circle",
+      "cross",
+      "diamond",
+      "triangle",
+      "star",
+    ][0];
+    card.shapeCount = 1;
+    card.color = ["green", "purple", "gray", "blues", "yellow", "red"][0];
+    return card;
+  });
+  return new ArraySchema<Card>(...cards);
+}
+
 export class Deck extends Schema {
   @type([Card]) deck: ArraySchema<Card>;
 
   constructor() {
     super();
-    const cards = [...Array(2)].map(() => {
-      const card = new Card();
-      card.shape = [
-        "blizzard",
-        "circle",
-        "cross",
-        "diamond",
-        "triangle",
-        "star",
-      ][0];
-      card.shapeCount = 1;
-      card.color = ["green", "purple", "gray", "blues", "yellow", "red"][0];
-      return card;
-    });
-    this.deck = new ArraySchema<Card>(...cards);
+    this.deck = genDeck(2);
   }
 }
 
@@ -45,6 +49,11 @@ export class Player extends Deck {
 }
 
 export class TableStack extends Deck {
+  constructor() {
+    super();
+    this.deck = genDeck(1);
+  }
+
   tryAdd(card: Card): boolean {
     const top = this.deck.at(0);
     if (
