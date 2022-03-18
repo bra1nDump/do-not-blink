@@ -3,7 +3,7 @@ import { MyRoomState } from "./schema/MyRoomState";
 
 export class MyRoom extends Room<MyRoomState> {
   onCreate(options: any) {
-    super.roomId = "lol";
+    super.roomId = options.id;
     this.setState(new MyRoomState());
 
     this.onMessage("play card", (client, message) => {
