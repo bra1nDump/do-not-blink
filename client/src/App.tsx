@@ -239,7 +239,21 @@ function CardComponent(props: CardComponentProps) {
 
   return (
     <>
-      <pre style={{ color }}>{renderedCard}</pre>
+      <pre
+        style={{
+          color,
+
+          paddingLeft: "0.3em",
+          paddingRight: "0.3em",
+
+          borderWidth: "medium",
+          borderRadius: "0.3em",
+          borderColor: "black",
+          borderStyle: "solid",
+        }}
+      >
+        {renderedCard}
+      </pre>
     </>
   );
 }
