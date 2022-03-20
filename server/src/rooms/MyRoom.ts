@@ -8,11 +8,17 @@ export class MyRoom extends Room<MyRoomState> {
     this.onMessage(
       "try play card",
       (client, { handIndex, tableStackIndex }) => {
+        console.log("Trying to play a card");
+
         const playerDeck = this.state.players.get(client.id).deck;
         const destinationStack = this.state.stacks.at(tableStackIndex);
         if (destinationStack.tryAdd(playerDeck.at(handIndex))) {
           console.log("Successfully played card, removing from player");
           playerDeck.deleteAt(handIndex);
+        } else {
+          console.log(
+            "Failed to play card, please check with your role book before trying next time :D"
+          );
         }
       }
     );

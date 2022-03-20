@@ -13,18 +13,17 @@ export class Card extends Schema {
 }
 
 function genDeck(count: number) {
+  const random = (upperNonInclusive: number) =>
+    Math.floor(Math.random() * upperNonInclusive);
+
+  const shapes = ["blizzard", "circle", "cross", "diamond", "triangle", "star"];
+  const colors = ["green", "purple", "gray", "blue", "yellow", "red"];
+
   const cards = [...Array(count)].map(() => {
     const card = new Card();
-    card.shape = [
-      "blizzard",
-      "circle",
-      "cross",
-      "diamond",
-      "triangle",
-      "star",
-    ][5];
-    card.shapeCount = 5;
-    card.color = ["green", "purple", "gray", "blue", "yellow", "red"][3];
+    card.shape = shapes[random(shapes.length)];
+    card.shapeCount = random(5) + 1;
+    card.color = colors[random(colors.length)];
     return card;
   });
   return new ArraySchema<Card>(...cards);

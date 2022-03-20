@@ -167,20 +167,51 @@ function RoomComponent(props: RoomProps) {
   const { name: playerName, deck: hand } = players.get(
     props.thisPlayerIdentifier
   );
+
+  const [playFromHandAtIndex, setPlayFromHandAtIndex] = useState<number | null>(
+    null
+  );
+  const [playToStackAtIndex, setPlayToStackAtIndex] = useState<number | null>(
+    null
+  );
+
+  useEffect(() => {
+    // Player selected both the card to play end the stack to play to
+    if (playFromHandAtIndex !== null && playToStackAtIndex !== null) {
+      props.tryPlayCard(playFromHandAtIndex, playToStackAtIndex);
+
+      // Once a move is attempted we should clear the stage for the next move
+      setPlayFromHandAtIndex(null);
+      setPlayToStackAtIndex(null);
+    }
+  }, [playFromHandAtIndex, playToStackAtIndex, props]);
+
   return (
     <>
-      {/* Stacks on the table */}
-      {stacks.map(({ deck }) => {
+      <div>Stacks on the table</div>
+      {stacks.map(({ deck }, index) => {
         const topCard = deck.at(0);
-        return <CardComponent card={topCard} />;
+        return (
+          <CardComponent
+            card={topCard}
+            onClick={() => setPlayToStackAtIndex(index)}
+          />
+        );
       })}
-      {/* Players hand */}
-      {hand
-        .toArray()
-        .slice(0, 3)
-        .map((card) => {
-          return <CardComponent card={card} />;
-        })}
+      <div>Players hand</div>
+      <div style={{ display: "flex", justifyContent: "space-around" }}>
+        {hand
+          .toArray()
+          .slice(0, 3)
+          .map((card, index) => {
+            return (
+              <CardComponent
+                card={card}
+                onClick={() => setPlayFromHandAtIndex(index)}
+              />
+            );
+          })}
+      </div>
       <button
         onClick={async () => {
           props.tryPlayCard(0, 0);
@@ -197,6 +228,7 @@ function RoomComponent(props: RoomProps) {
 
 interface CardComponentProps {
   card: Card;
+  onClick: () => void;
 }
 
 function CardComponent(props: CardComponentProps) {
@@ -248,6 +280,7 @@ function CardComponent(props: CardComponentProps) {
   return (
     <>
       <pre
+        onClick={props.onClick}
         style={{
           color,
 
