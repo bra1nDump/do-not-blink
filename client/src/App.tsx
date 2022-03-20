@@ -71,6 +71,7 @@ export class MyRoomState extends Schema {
 }
 
 interface RoomProps {
+  thisPlayerIdentifier: string;
   state: MyRoomState;
   tryPlayCard: (handIndex: number, tableStackIndex: number) => void;
 }
@@ -80,10 +81,16 @@ function print(ob: any) {
 }
 
 function App() {
-  const client = useRef(new Client("ws://localhost:2567"));
+  // Creates a client that is connected to our server
+  const client = useRef(new Client("ws://Localhost:2567"));
 
+  // Lobby input fields
   const [roomName, setRoomName] = useState("");
+  const [playerName, setPlayerName] = useState("");
+
   const [room, setRoom] = useState<Room<MyRoomState> | null>(null);
+
+  // Room state will be updated every time any player in the room makes a move
   const [roomState, setRoomState] = useState<MyRoomState | null>(null);
 
   useEffect(() => {
@@ -101,20 +108,28 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        {room ? (
+        {roomState ? (
           <RoomComponent
             state={roomState}
+            thisPlayerIdentifier={room.sessionId}
             tryPlayCard={(handIndex, tableStackIndex) => {
               room.send("try play card", { handIndex, tableStackIndex });
             }}
           />
         ) : (
           <>
-            <div>Room name</div>
+            <div>Room name:</div>
             <input
               value={roomName}
               onChange={(e) => {
                 setRoomName(e.target.value);
+              }}
+            />
+            <div>Your nickname:</div>
+            <input
+              value={playerName}
+              onChange={(e) => {
+                setPlayerName(e.target.value);
               }}
             />
             <button
@@ -122,7 +137,7 @@ function App() {
                 setRoom(
                   await client.current.create<MyRoomState>("my_room", {
                     roomName,
-                    playerName: "pp",
+                    playerName,
                   })
                 );
               }}
@@ -131,7 +146,11 @@ function App() {
             </button>
             <button
               onClick={async () => {
-                setRoom(await client.current.joinById<MyRoomState>(roomName));
+                setRoom(
+                  await client.current.joinById<MyRoomState>(roomName, {
+                    playerName,
+                  })
+                );
               }}
             >
               Join room
@@ -144,8 +163,65 @@ function App() {
 }
 
 function RoomComponent(props: RoomProps) {
+  const { name: roomName, players, stacks } = props.state;
+  const { name: playerName, deck: hand } = players.get(
+    props.thisPlayerIdentifier
+  );
   return (
     <>
+      {stacks.map(({ deck }) => {
+        const topCard = deck.at(0);
+        const { shape, shapeCount, color } = topCard;
+
+        // prettier-ignore
+        const layouts: { [key:number]: string[] } = {
+          1: [
+            "   ", 
+            " * ", 
+            "   "
+          ], 
+          2: [
+            "*  ", 
+            "   ", 
+            "  *"
+          ], 
+          3: [
+            "  *", 
+            " * ", 
+            "*  "
+          ], 
+          4: [
+            "* *", 
+            "   ", 
+            "* *"
+          ], 
+          5: [
+            "* *", 
+            " * ", 
+            "* *"
+          ]
+        };
+
+        // prettier-ignore
+        const shapeSymbols: { [key:string]: string } = {
+          blizzard: "/",
+          circle: "o",
+          cross: "x",
+          diamond: "!",
+          triangle: "^",
+          star: "*"
+        };
+
+        const cardLayout = layouts[shapeCount].join("\n");
+        const shapeSymbol = shapeSymbols[shape];
+        const renderedCard = cardLayout.replaceAll("*", shapeSymbol);
+
+        return (
+          <>
+            <pre style={{ color: topCard.color }}>{renderedCard}</pre>
+          </>
+        );
+      })}
       <button
         onClick={async () => {
           props.tryPlayCard(0, 0);
@@ -153,7 +229,9 @@ function RoomComponent(props: RoomProps) {
       >
         Play card
       </button>
-      <pre>{JSON.stringify(props.state, null, 2)}</pre>
+      <pre style={{ fontSize: "small" }}>
+        {JSON.stringify(props.state, null, 2)}
+      </pre>
     </>
   );
 }
