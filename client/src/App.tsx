@@ -75,51 +75,8 @@ interface RoomProps {
   tryPlayCard: (handIndex: number, tableStackIndex: number) => void;
 }
 
-function RoomComponent(props: RoomProps) {
-  console.log("RoomComponent");
-
-  return (
-    <>
-      <button
-        onClick={async () => {
-          props.tryPlayCard(0, 0);
-        }}
-      >
-        Play card
-      </button>
-      <pre>{JSON.stringify(props.state, null, 2)}</pre>
-    </>
-  );
-}
-
-interface RoomClassProps {
-  room: Room<MyRoomState>;
-  tryPlayCard: (handIndex: number, tableStackIndex: number) => void;
-}
-
-class RoomClass extends React.Component<RoomClassProps, MyRoomState> {
-  constructor(props: RoomClassProps) {
-    super(props);
-    this.state = null;
-    props.room.onStateChange((state) => {
-      this.setState(state);
-    });
-  }
-
-  public render() {
-    return (
-      <>
-        <button
-          onClick={async () => {
-            this.props.tryPlayCard(0, 0);
-          }}
-        >
-          Play card
-        </button>
-        <pre>{JSON.stringify(this.state, null, 2)}</pre>
-      </>
-    );
-  }
+function print(ob: any) {
+  console.log(JSON.stringify(ob, null, 2));
 }
 
 function App() {
@@ -130,33 +87,23 @@ function App() {
   const [roomState, setRoomState] = useState<MyRoomState | null>(null);
 
   useEffect(() => {
-    if (room) {
-      const handleChange = (params: MyRoomState): void => {
-        setRoomState(params);
-        //room.removeAllListeners();
-        console.log(roomState);
-      };
-      //room.onStateChange(handleChange);
-      return () => {
-        //room.removeAllListeners();
-      };
-    }
-  }, [room, roomState]);
+    room?.onStateChange((stateReference) => {
+      // State object remains the same throughout room's lifetime.
+      // If we simply pass stateReference to setRoomState
+      // react will be tricked into thinking the state has not changed
+      // and our component will not be re rendered.
+      setRoomState(Object.assign({}, stateReference));
+    });
 
-  console.log(JSON.stringify(roomState, null, 2));
+    return room?.removeAllListeners;
+  }, [room]);
 
   return (
     <div className="App">
       <header className="App-header">
         {room ? (
-          // <RoomComponent
-          //   state={roomState}
-          //   tryPlayCard={(handIndex, tableStackIndex) => {
-          //     room.send("try play card", { handIndex, tableStackIndex });
-          //   }}
-          // />
-          <RoomClass
-            room={room}
+          <RoomComponent
+            state={roomState}
             tryPlayCard={(handIndex, tableStackIndex) => {
               room.send("try play card", { handIndex, tableStackIndex });
             }}
@@ -172,28 +119,19 @@ function App() {
             />
             <button
               onClick={async () => {
-                const roomL = await client.current.create<MyRoomState>(
-                  "my_room",
-                  {
+                setRoom(
+                  await client.current.create<MyRoomState>("my_room", {
                     roomName,
                     playerName: "pp",
-                  }
+                  })
                 );
-                setRoom(roomL);
-                // roomL.onStateChange((params) => {
-                //   setRoomState(params);
-                // });
               }}
             >
               Create room -
             </button>
             <button
               onClick={async () => {
-                const roomL = await client.current.joinById<MyRoomState>(
-                  roomName
-                );
-                setRoom(roomL);
-                roomL.onStateChange(setRoomState);
+                setRoom(await client.current.joinById<MyRoomState>(roomName));
               }}
             >
               Join room
@@ -202,6 +140,21 @@ function App() {
         )}
       </header>
     </div>
+  );
+}
+
+function RoomComponent(props: RoomProps) {
+  return (
+    <>
+      <button
+        onClick={async () => {
+          props.tryPlayCard(0, 0);
+        }}
+      >
+        Play card
+      </button>
+      <pre>{JSON.stringify(props.state, null, 2)}</pre>
+    </>
   );
 }
 
