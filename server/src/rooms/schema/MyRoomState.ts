@@ -68,13 +68,42 @@ export class TableStack extends Deck {
 }
 
 export class MyRoomState extends Schema {
+  @type("string") name: string;
+  @type("string") winner?: string;
+
+  @type([TableStack]) stacks = new ArraySchema<TableStack>();
+  @type({ map: Player }) players = new MapSchema<Player>();
+
   constructor(name: string) {
     super();
     this.name = name;
   }
 
-  @type("string") name: string;
+  tryPlayCard(
+    playerIdentifier: string,
+    handIndex: number,
+    tableStackIndex: number
+  ) {
+    console.log("Trying to play a card");
 
-  @type([TableStack]) stacks = new ArraySchema<TableStack>();
-  @type({ map: Player }) players = new MapSchema<Player>();
+    const player = this.players.get(playerIdentifier);
+    const theirDeck = player.deck;
+    const destinationStack = this.stacks.at(tableStackIndex);
+    if (destinationStack.tryAdd(theirDeck.at(handIndex))) {
+      console.log(
+        "Successfully played card, moving it from player to one of the table stacks"
+      );
+      theirDeck.deleteAt(handIndex);
+    } else {
+      console.log(
+        "Failed to play card, please check with your role book before trying next time :D"
+      );
+    }
+
+    // If the player who just made the move ran out of cards
+    // declare them the winner
+    if (theirDeck.length === 0) {
+      this.winner = playerIdentifier;
+    }
+  }
 }

@@ -65,6 +65,7 @@ export class MyRoomState extends Schema {
   }
 
   @type("string") name: string;
+  @type("string") winner?: string;
 
   @type([TableStack]) stacks = new ArraySchema<TableStack>();
   @type({ map: Player }) players = new MapSchema<Player>();
