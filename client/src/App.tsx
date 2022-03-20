@@ -169,10 +169,18 @@ function RoomComponent(props: RoomProps) {
   );
   return (
     <>
+      {/* Stacks on the table */}
       {stacks.map(({ deck }) => {
         const topCard = deck.at(0);
         return <CardComponent card={topCard} />;
       })}
+      {/* Players hand */}
+      {hand
+        .toArray()
+        .slice(0, 3)
+        .map((card) => {
+          return <CardComponent card={card} />;
+        })}
       <button
         onClick={async () => {
           props.tryPlayCard(0, 0);
