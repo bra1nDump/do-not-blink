@@ -147,7 +147,8 @@ function App() {
             <button
               onClick={async () => {
                 setRoom(
-                  await client.current.joinById<MyRoomState>(roomName, {
+                  await client.current.join<MyRoomState>("my_room", {
+                    roomName,
                     playerName,
                   })
                 );
