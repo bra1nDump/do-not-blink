@@ -22,9 +22,9 @@ function genDeck(count: number) {
       "diamond",
       "triangle",
       "star",
-    ][0];
-    card.shapeCount = 1;
-    card.color = ["green", "purple", "gray", "blues", "yellow", "red"][0];
+    ][5];
+    card.shapeCount = 5;
+    card.color = ["green", "purple", "gray", "blue", "yellow", "red"][3];
     return card;
   });
   return new ArraySchema<Card>(...cards);

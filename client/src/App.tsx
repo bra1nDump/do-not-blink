@@ -171,56 +171,7 @@ function RoomComponent(props: RoomProps) {
     <>
       {stacks.map(({ deck }) => {
         const topCard = deck.at(0);
-        const { shape, shapeCount, color } = topCard;
-
-        // prettier-ignore
-        const layouts: { [key:number]: string[] } = {
-          1: [
-            "   ", 
-            " * ", 
-            "   "
-          ], 
-          2: [
-            "*  ", 
-            "   ", 
-            "  *"
-          ], 
-          3: [
-            "  *", 
-            " * ", 
-            "*  "
-          ], 
-          4: [
-            "* *", 
-            "   ", 
-            "* *"
-          ], 
-          5: [
-            "* *", 
-            " * ", 
-            "* *"
-          ]
-        };
-
-        // prettier-ignore
-        const shapeSymbols: { [key:string]: string } = {
-          blizzard: "/",
-          circle: "o",
-          cross: "x",
-          diamond: "!",
-          triangle: "^",
-          star: "*"
-        };
-
-        const cardLayout = layouts[shapeCount].join("\n");
-        const shapeSymbol = shapeSymbols[shape];
-        const renderedCard = cardLayout.replaceAll("*", shapeSymbol);
-
-        return (
-          <>
-            <pre style={{ color: topCard.color }}>{renderedCard}</pre>
-          </>
-        );
+        return <CardComponent card={topCard} />;
       })}
       <button
         onClick={async () => {
@@ -232,6 +183,63 @@ function RoomComponent(props: RoomProps) {
       <pre style={{ fontSize: "small" }}>
         {JSON.stringify(props.state, null, 2)}
       </pre>
+    </>
+  );
+}
+
+interface CardComponentProps {
+  card: Card;
+}
+
+function CardComponent(props: CardComponentProps) {
+  const { shape, shapeCount, color } = props.card;
+
+  // prettier-ignore
+  const layouts: { [key:number]: string[] } = {
+    1: [
+      "   ", 
+      " * ", 
+      "   "
+    ], 
+    2: [
+      "*  ", 
+      "   ", 
+      "  *"
+    ], 
+    3: [
+      "  *", 
+      " * ", 
+      "*  "
+    ], 
+    4: [
+      "* *", 
+      "   ", 
+      "* *"
+    ], 
+    5: [
+      "* *", 
+      " * ", 
+      "* *"
+    ]
+  };
+
+  // prettier-ignore
+  const shapeSymbols: { [key:string]: string } = {
+    blizzard: "/",
+    circle: "o",
+    cross: "x",
+    diamond: "!",
+    triangle: "^",
+    star: "*"
+  };
+
+  const cardLayout = layouts[shapeCount].join("\n");
+  const shapeSymbol = shapeSymbols[shape];
+  const renderedCard = cardLayout.replaceAll("*", shapeSymbol);
+
+  return (
+    <>
+      <pre style={{ color }}>{renderedCard}</pre>
     </>
   );
 }
