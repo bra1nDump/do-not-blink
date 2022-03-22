@@ -31,11 +31,6 @@ function genDeck(count: number) {
 
 export class Deck extends Schema {
   @type([Card]) deck: ArraySchema<Card>;
-
-  constructor() {
-    super();
-    this.deck = genDeck(2);
-  }
 }
 
 export class Player extends Deck {
@@ -44,6 +39,7 @@ export class Player extends Deck {
   constructor(name: string) {
     super();
     this.name = name;
+    this.deck = genDeck(4);
   }
 }
 
@@ -77,6 +73,7 @@ export class MyRoomState extends Schema {
   constructor(name: string) {
     super();
     this.name = name;
+    this.stacks.unshift(new TableStack(), new TableStack());
   }
 
   tryPlayCard(

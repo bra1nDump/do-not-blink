@@ -11,12 +11,13 @@
 - [x] Make a presentation from the plan above
 - [x] Remove create room button
 - [x] Make user names emojis
-- [ ] Show and game state
-- [ ] Test with ngrok
-- [ ] Maybe do drag and drop
+- [x] Show endgame state
 - [ ] Style the game
-- [ ] Refactor names
+- [x] Fixed the number of stacks on the table to 2
 - [ ] Insert code snippets into the presentation. This will allow us to think about changing the code without looking in the entire code base
+- [ ] Test with ngrok
+- [ ] Refactor names
+- [ ] Maybe do drag and drop
 
 ## Technical resources
 

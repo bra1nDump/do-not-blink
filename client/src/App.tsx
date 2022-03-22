@@ -1,4 +1,10 @@
-import React, { useDebugValue, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useDebugValue,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Client, Room } from "colyseus.js";
 import "./App.css";
 
@@ -94,13 +100,19 @@ function App() {
   const [room, setRoom] = useState<Room<MyRoomState> | null>(null);
 
   // Called when 'Join or create room' is clicked
-  const joinOrCreateOnClick = async () => {
-    const room = await client.current.joinOrCreate<MyRoomState>("my_room", {
-      roomName,
-      playerName,
-    });
-    setRoom(room);
-  };
+  const joinOrCreateOnClick = useCallback(() => {
+    client.current
+      .joinOrCreate<MyRoomState>("my_room", {
+        roomName: Math.random().toString(),
+        playerName,
+      })
+      .then(setRoom);
+  }, [roomName, playerName]);
+
+  // Immediately dropped into a room for debugging UI
+  useEffect(() => {
+    joinOrCreateOnClick();
+  }, []);
 
   // Room state will be updated every time any player in the room makes a move
   const [roomState, setRoomState] = useState<MyRoomState | null>(null);
@@ -222,16 +234,19 @@ function RoomComponent(props: RoomProps) {
   return (
     <>
       <div>Stacks on the table</div>
-      {stacks.map(({ deck }, index) => {
-        const topCard = deck.at(0);
-        return (
-          <CardComponent
-            card={topCard}
-            onClick={() => setPlayToStackAtIndex(index)}
-          />
-        );
-      })}
-      <div>Players hand</div>
+      <div style={{ display: "flex", justifyContent: "space-around" }}>
+        {stacks.map(({ deck }, index) => {
+          const topCard = deck.at(0);
+          return (
+            <CardComponent
+              card={topCard}
+              onClick={() => setPlayToStackAtIndex(index)}
+            />
+          );
+        })}
+      </div>
+
+      <div style={{ height: "10em" }}></div>
       <div style={{ display: "flex", justifyContent: "space-around" }}>
         {hand
           .toArray()
@@ -245,16 +260,7 @@ function RoomComponent(props: RoomProps) {
             );
           })}
       </div>
-      <button
-        onClick={async () => {
-          props.tryPlayCard(0, 0);
-        }}
-      >
-        Play card
-      </button>
-      <pre style={{ fontSize: "small" }}>
-        {JSON.stringify(props.state, null, 2)}
-      </pre>
+      <div>Your cards</div>
     </>
   );
 }
@@ -316,6 +322,8 @@ function CardComponent(props: CardComponentProps) {
         onClick={props.onClick}
         style={{
           color,
+
+          margin: "0.3em",
 
           paddingLeft: "0.3em",
           paddingRight: "0.3em",

@@ -20,13 +20,19 @@ export class MyRoom extends Room<MyRoomState> {
       ({ name }) => name
     );
     // To not allow a player with the same user name
-    return existingPlayerNames.indexOf(playerName) === -1;
+    const foundAPlayerWithTheSameName =
+      existingPlayerNames.indexOf(playerName) !== -1;
+    if (foundAPlayerWithTheSameName) {
+      console.log(`There already exists a player with a name ${playerName}`);
+      return false;
+    } else {
+      return true;
+    }
   }
 
   onJoin(client: Client, options: any) {
     console.log(client.sessionId, "joined!");
     this.state.players.set(client.sessionId, new Player(options.playerName));
-    this.state.stacks.unshift(new TableStack());
   }
 
   onLeave(client: Client, consented: boolean) {
