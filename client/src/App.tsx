@@ -6,6 +6,7 @@ import React, {
   useState,
 } from "react";
 import { Client, Room } from "colyseus.js";
+import "./App.css";
 
 import {
   Schema,
@@ -94,10 +95,10 @@ function App() {
   );
 }
 
-function Game() {
-  // In development mode connect to local host
-  const inDevelopmentMode = process.env.NODE_ENV === "development";
+// In development mode connect to local host
+const inDevelopmentMode = process.env.NODE_ENV === "development";
 
+function Game() {
   let clientAddress = inDevelopmentMode
     ? "ws://localhost:2567"
     : "ws://do-not-blink.loca.lt";
@@ -116,7 +117,7 @@ function Game() {
     client.current
       .joinOrCreate<MyRoomState>("my_room", {
         roomName,
-        playerName,
+        playerName: inDevelopmentMode ? Math.random().toString() : playerName,
       })
       .then(setRoom);
   }, [roomName, playerName]);
@@ -126,9 +127,8 @@ function Game() {
     if (!inDevelopmentMode) {
       return;
     }
-    setPlayerName(Math.random().toString());
     joinOrCreateOnClick();
-  }, []);
+  }, [joinOrCreateOnClick]);
 
   // Room state will be updated every time any player in the room makes a move
   const [roomState, setRoomState] = useState<MyRoomState | null>(null);
