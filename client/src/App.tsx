@@ -116,8 +116,10 @@ function Game() {
   const joinOrCreateOnClick = useCallback(() => {
     client.current
       .joinOrCreate<MyRoomState>("my_room", {
-        roomName,
-        playerName: inDevelopmentMode ? Math.random().toString() : playerName,
+        roomName: inDevelopmentMode
+          ? Math.random().toString().substring(0, 4)
+          : playerName,
+        playerName: inDevelopmentMode ? "🤡" : playerName,
       })
       .then(setRoom);
   }, [roomName, playerName]);
@@ -323,12 +325,12 @@ function CardComponent(props: CardComponentProps) {
 
   // prettier-ignore
   const shapeSymbols: { [key:string]: string } = {
-    blizzard: "/",
+    blizzard: "@",
     circle: "o",
-    cross: "x",
-    diamond: "!",
-    triangle: "^",
-    star: "*"
+    cross: "ƒ",
+    diamond: "$",
+    triangle: "█",
+    star: "¤"
   };
 
   const cardLayout = layouts[shapeCount].join("\n");
@@ -341,11 +343,15 @@ function CardComponent(props: CardComponentProps) {
         onClick={props.onClick}
         style={{
           color,
+          backgroundColor: "white",
+          fontWeight: "bold",
 
           margin: "0.3em",
 
-          paddingLeft: "0.3em",
-          paddingRight: "0.3em",
+          paddingLeft: "0.5em",
+          paddingRight: "0.5em",
+          paddingTop: "0.4em",
+          paddingBottom: "0.4em",
 
           borderWidth: "medium",
           borderRadius: "0.3em",

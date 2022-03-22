@@ -17,7 +17,7 @@ function genDeck(count: number) {
     Math.floor(Math.random() * upperNonInclusive);
 
   const shapes = ["blizzard", "circle", "cross", "diamond", "triangle", "star"];
-  const colors = ["green", "purple", "gray", "blue", "yellow", "red"];
+  const colors = ["green", "purple", "green", "blue", "silver", "red"];
 
   const cards = [...Array(count)].map(() => {
     const card = new Card();
