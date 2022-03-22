@@ -247,6 +247,7 @@ function RoomComponent(props: RoomProps) {
 
   return (
     <>
+      <h3 style={{ margin: "5vw", textAlign: "left" }}>Room {roomName}</h3>
       <div>Stacks on the table</div>
       <div style={{ display: "flex", justifyContent: "space-around" }}>
         {stacks.map(({ deck }, index) => {
@@ -254,6 +255,7 @@ function RoomComponent(props: RoomProps) {
           return (
             <CardComponent
               card={topCard}
+              selected={playToStackAtIndex === index}
               onClick={() => setPlayToStackAtIndex(index)}
             />
           );
@@ -269,18 +271,21 @@ function RoomComponent(props: RoomProps) {
             return (
               <CardComponent
                 card={card}
+                selected={playFromHandAtIndex === index}
                 onClick={() => setPlayFromHandAtIndex(index)}
               />
             );
           })}
       </div>
       <div>Your cards</div>
+      <h1 style={{ margin: "5vw" }}>{playerName}</h1>
     </>
   );
 }
 
 interface CardComponentProps {
   card: Card;
+  selected: boolean;
   onClick: () => void;
 }
 
@@ -344,7 +349,7 @@ function CardComponent(props: CardComponentProps) {
 
           borderWidth: "medium",
           borderRadius: "0.3em",
-          borderColor: "black",
+          borderColor: props.selected ? "gold" : "black",
           borderStyle: "solid",
         }}
       >
