@@ -1,6 +1,7 @@
 import Arena from "@colyseus/arena";
 import { monitor } from "@colyseus/monitor";
-
+import express from "express";
+import * as path from "path";
 /**
  * Import your Room files
  */
@@ -17,12 +18,8 @@ export default Arena({
   },
 
   initializeExpress: (app) => {
-    /**
-     * Bind your custom express routes here:
-     */
-    app.get("/", (req, res) => {
-      res.send("It's time to kick ass and chew bubblegum!");
-    });
+    const websiteDirectory = path.resolve(__dirname, "../../client/build");
+    app.use(express.static(websiteDirectory));
 
     /**
      * Bind @colyseus/monitor
