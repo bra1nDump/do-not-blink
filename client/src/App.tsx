@@ -279,8 +279,9 @@ function RoomComponent(props: RoomProps) {
             );
           })}
       </div>
-      <div>Your cards</div>
-      <h1 style={{ margin: "5vw" }}>{playerName}</h1>
+      <h1 style={{ margin: "5vw" }}>
+        {playerName} {hand.length}🃏
+      </h1>
     </>
   );
 }
@@ -326,10 +327,10 @@ function CardComponent(props: CardComponentProps) {
   // prettier-ignore
   const shapeSymbols: { [key:string]: string } = {
     blizzard: "@",
-    circle: "o",
+    circle: "=",
     cross: "ƒ",
     diamond: "$",
-    triangle: "█",
+    triangle: "■",
     star: "¤"
   };
 
@@ -342,7 +343,7 @@ function CardComponent(props: CardComponentProps) {
       <pre
         onClick={props.onClick}
         style={{
-          color,
+          WebkitTextFillColor: color,
           backgroundColor: "white",
           fontWeight: "bold",
 
@@ -353,10 +354,13 @@ function CardComponent(props: CardComponentProps) {
           paddingTop: "0.4em",
           paddingBottom: "0.4em",
 
-          borderWidth: "medium",
+          borderWidth: "2px",
           borderRadius: "0.3em",
           borderColor: props.selected ? "gold" : "black",
           borderStyle: "solid",
+
+          color: "gray",
+          boxShadow: "2px 3px 4px",
         }}
       >
         {renderedCard}

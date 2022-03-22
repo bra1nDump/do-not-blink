@@ -12,11 +12,12 @@
 - [x] Remove create room button
 - [x] Make user names emojis
 - [x] Show endgame state
-- [ ] Style the game
+- [x] Style the game
 - [x] Serve build website from the backend
 - [x] Fixed the number of stacks on the table to 2
 - [ ] Insert code snippets into the presentation. This will allow us to think about changing the code without looking in the entire code base
-- [ ] Test with ngrok
+- [x] Test with ngrok, and local tunnel
+  - [ ] It is kind of slow, maybe try deploying it
 - [ ] Refactor names
 - [ ] Maybe do drag and drop
 
