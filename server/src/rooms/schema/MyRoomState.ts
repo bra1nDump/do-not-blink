@@ -86,6 +86,11 @@ export class MyRoomState extends Schema {
   ) {
     console.log("Trying to play a card");
 
+    if (this.winner !== undefined) {
+      console.log(`Too late to make a move, the winner is ${this.winner}`);
+      return;
+    }
+
     const player = this.players.get(playerIdentifier);
     const theirDeck = player.deck;
     const destinationStack = this.stacks.at(tableStackIndex);
@@ -103,7 +108,7 @@ export class MyRoomState extends Schema {
     // If the player who just made the move ran out of cards
     // declare them the winner
     if (theirDeck.length === 0) {
-      this.winner = playerIdentifier;
+      this.winner = player.name;
     }
   }
 }

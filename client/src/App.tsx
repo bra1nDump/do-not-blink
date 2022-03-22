@@ -76,6 +76,7 @@ interface RoomProps {
   thisPlayerIdentifier: string;
   state: MyRoomState;
   tryPlayCard: (handIndex: number, tableStackIndex: number) => void;
+  exitGame: () => void;
 }
 
 function print(ob: any) {
@@ -113,7 +114,10 @@ function App() {
       setRoomState(Object.assign({}, stateReference));
     });
 
-    return room?.removeAllListeners;
+    const cleanUp = () => {
+      room?.leave();
+    };
+    return cleanUp;
   }, [room]);
 
   return (
@@ -125,6 +129,10 @@ function App() {
             thisPlayerIdentifier={room.sessionId}
             tryPlayCard={(handIndex, tableStackIndex) => {
               room.send("try play card", { handIndex, tableStackIndex });
+            }}
+            exitGame={async () => {
+              setRoomState(null);
+              setRoom(null);
             }}
           />
         ) : (
@@ -164,7 +172,7 @@ function App() {
 }
 
 function RoomComponent(props: RoomProps) {
-  const { name: roomName, players, stacks } = props.state;
+  const { name: roomName, players, stacks, winner } = props.state;
   const { name: playerName, deck: hand } = players.get(
     props.thisPlayerIdentifier
   );
@@ -186,6 +194,30 @@ function RoomComponent(props: RoomProps) {
       setPlayToStackAtIndex(null);
     }
   }, [playFromHandAtIndex, playToStackAtIndex, props]);
+
+  // Winner field from the game server matches our own name
+  // This must mean we won
+  if (winner === playerName) {
+    return (
+      <>
+        <h1>Congratulations {playerName} you win!!</h1>
+        <Button onClick={props.exitGame}>Back to lobby</Button>
+      </>
+    );
+  } else if (
+    // Winner field has some other user name
+    // This must mean somebody else won
+    winner !== undefined
+  ) {
+    return (
+      <>
+        <h1>
+          {playerName} tough luck, {winner} is the winner
+        </h1>
+        <Button onClick={props.exitGame}>Back to lobby</Button>
+      </>
+    );
+  }
 
   return (
     <>
