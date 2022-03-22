@@ -1,1 +1,1 @@
-{"cells":[{"kind":2,"languageId":"shellscript","value":"npm install @mui/material @emotion/react @emotion/styled","metadata":{}}]}
+{"cells":[{"kind":2,"languageId":"shellscript","value":"npm run build","metadata":{}}]}

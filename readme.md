@@ -13,7 +13,7 @@
 - [x] Make user names emojis
 - [x] Show endgame state
 - [ ] Style the game
-- [ ] Serve build website from the backend
+- [x] Serve build website from the backend
 - [x] Fixed the number of stacks on the table to 2
 - [ ] Insert code snippets into the presentation. This will allow us to think about changing the code without looking in the entire code base
 - [ ] Test with ngrok

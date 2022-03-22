@@ -6,7 +6,6 @@ import React, {
   useState,
 } from "react";
 import { Client, Room } from "colyseus.js";
-import "./App.css";
 
 import {
   Schema,
@@ -85,13 +84,26 @@ interface RoomProps {
   exitGame: () => void;
 }
 
-function print(ob: any) {
-  console.log(JSON.stringify(ob, null, 2));
+function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+        <Game />
+      </header>
+    </div>
+  );
 }
 
-function App() {
+function Game() {
+  // In development mode connect to local host
+  const inDevelopmentMode = process.env.NODE_ENV === "development";
+
+  let clientAddress = inDevelopmentMode
+    ? "ws://localhost:2567"
+    : "ws://do-not-blink.loca.lt";
+  // : "ws://6ac3-2601-647-5a00-60e0-e9be-dbd8-a689-6a4.ngrok.io/";
   // Creates a client that is connected to our server
-  const client = useRef(new Client("ws://Localhost:2567"));
+  const client = useRef(new Client(clientAddress));
 
   // Lobby input fields
   const [roomName, setRoomName] = useState("");
@@ -103,7 +115,7 @@ function App() {
   const joinOrCreateOnClick = useCallback(() => {
     client.current
       .joinOrCreate<MyRoomState>("my_room", {
-        roomName: Math.random().toString(),
+        roomName,
         playerName,
       })
       .then(setRoom);
@@ -111,6 +123,10 @@ function App() {
 
   // Immediately dropped into a room for debugging UI
   useEffect(() => {
+    if (!inDevelopmentMode) {
+      return;
+    }
+    setPlayerName(Math.random().toString());
     joinOrCreateOnClick();
   }, []);
 
@@ -132,55 +148,53 @@ function App() {
     return cleanUp;
   }, [room]);
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        {roomState ? (
-          <RoomComponent
-            state={roomState}
-            thisPlayerIdentifier={room.sessionId}
-            tryPlayCard={(handIndex, tableStackIndex) => {
-              room.send("try play card", { handIndex, tableStackIndex });
-            }}
-            exitGame={async () => {
-              setRoomState(null);
-              setRoom(null);
-            }}
-          />
-        ) : (
-          <>
-            <div>Room name:</div>
-            <input
-              value={roomName}
-              onChange={(e) => {
-                setRoomName(e.target.value);
-              }}
-            />
+  if (roomState) {
+    return (
+      <RoomComponent
+        state={roomState}
+        thisPlayerIdentifier={room.sessionId}
+        tryPlayCard={(handIndex, tableStackIndex) => {
+          room.send("try play card", { handIndex, tableStackIndex });
+        }}
+        exitGame={async () => {
+          setRoomState(null);
+          setRoom(null);
+        }}
+      />
+    );
+  } else {
+    return (
+      <>
+        <div>Room name:</div>
+        <input
+          value={roomName}
+          onChange={(e) => {
+            setRoomName(e.target.value);
+          }}
+        />
 
-            {/* Player picker */}
-            <div>Choose your warrior:</div>
-            <ToggleButtonGroup
-              exclusive={true}
-              value={playerName}
-              onChange={(_, x) => setPlayerName(x)}
-            >
-              <ToggleButton value="💩">💩</ToggleButton>
-              <ToggleButton value="🤡">🤡</ToggleButton>
-              <ToggleButton value="🗿">🗿</ToggleButton>
-            </ToggleButtonGroup>
+        {/* Player picker */}
+        <div>Choose your warrior:</div>
+        <ToggleButtonGroup
+          exclusive={true}
+          value={playerName}
+          onChange={(_, x) => setPlayerName(x)}
+        >
+          <ToggleButton value="💩">💩</ToggleButton>
+          <ToggleButton value="🤡">🤡</ToggleButton>
+          <ToggleButton value="🗿">🗿</ToggleButton>
+        </ToggleButtonGroup>
 
-            <Button
-              // Disable the button if room name or player is not picked
-              disabled={!roomName || !playerName}
-              onClick={joinOrCreateOnClick}
-            >
-              Join or create
-            </Button>
-          </>
-        )}
-      </header>
-    </div>
-  );
+        <Button
+          // Disable the button if room name or player is not picked
+          disabled={!roomName || !playerName}
+          onClick={joinOrCreateOnClick}
+        >
+          Join or create
+        </Button>
+      </>
+    );
+  }
 }
 
 function RoomComponent(props: RoomProps) {

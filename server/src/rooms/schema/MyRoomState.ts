@@ -39,7 +39,7 @@ export class Player extends Deck {
   constructor(name: string) {
     super();
     this.name = name;
-    this.deck = genDeck(4);
+    this.deck = genDeck(20);
   }
 }
 
