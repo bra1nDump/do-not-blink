@@ -1,4 +1,5 @@
 import { Room, Client } from "colyseus";
+import { IncomingMessage } from "http";
 import { MyRoomState, Player, TableStack } from "./schema/MyRoomState";
 
 export class MyRoom extends Room<MyRoomState> {
@@ -11,6 +12,15 @@ export class MyRoom extends Room<MyRoomState> {
         this.state.tryPlayCard(client.sessionId, handIndex, tableStackIndex);
       }
     );
+  }
+
+  onAuth(client: Client, options: any, request?: IncomingMessage) {
+    const playerName: string = options.playerName;
+    const existingPlayerNames = Array(...this.state.players.values()).map(
+      ({ name }) => name
+    );
+    // To not allow a player with the same user name
+    return existingPlayerNames.indexOf(playerName) === -1;
   }
 
   onJoin(client: Client, options: any) {

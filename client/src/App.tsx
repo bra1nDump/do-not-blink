@@ -9,6 +9,7 @@ import {
   ArraySchema,
   MapSchema,
 } from "@colyseus/schema";
+import { Button, ToggleButton, ToggleButtonGroup } from "@mui/material";
 
 export class Card extends Schema {
   @type("string") shape: string;
@@ -91,6 +92,15 @@ function App() {
 
   const [room, setRoom] = useState<Room<MyRoomState> | null>(null);
 
+  // Called when 'Join or create room' is clicked
+  const joinOrCreateOnClick = async () => {
+    const room = await client.current.joinOrCreate<MyRoomState>("my_room", {
+      roomName,
+      playerName,
+    });
+    setRoom(room);
+  };
+
   // Room state will be updated every time any player in the room makes a move
   const [roomState, setRoomState] = useState<MyRoomState | null>(null);
 
@@ -126,37 +136,26 @@ function App() {
                 setRoomName(e.target.value);
               }}
             />
-            <div>Your nickname:</div>
-            <input
+
+            {/* Player picker */}
+            <div>Choose your warrior:</div>
+            <ToggleButtonGroup
+              exclusive={true}
               value={playerName}
-              onChange={(e) => {
-                setPlayerName(e.target.value);
-              }}
-            />
-            <button
-              onClick={async () => {
-                setRoom(
-                  await client.current.create<MyRoomState>("my_room", {
-                    roomName,
-                    playerName,
-                  })
-                );
-              }}
+              onChange={(_, x) => setPlayerName(x)}
             >
-              Create room -
-            </button>
-            <button
-              onClick={async () => {
-                setRoom(
-                  await client.current.join<MyRoomState>("my_room", {
-                    roomName,
-                    playerName,
-                  })
-                );
-              }}
+              <ToggleButton value="💩">💩</ToggleButton>
+              <ToggleButton value="🤡">🤡</ToggleButton>
+              <ToggleButton value="🗿">🗿</ToggleButton>
+            </ToggleButtonGroup>
+
+            <Button
+              // Disable the button if room name or player is not picked
+              disabled={!roomName || !playerName}
+              onClick={joinOrCreateOnClick}
             >
-              Join room
-            </button>
+              Join or create
+            </Button>
           </>
         )}
       </header>

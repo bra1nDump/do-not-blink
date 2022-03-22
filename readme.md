@@ -8,10 +8,11 @@
 
 # To Do
 
-- [ ] Make a presentation from the plan above
+- [x] Make a presentation from the plan above
+- [x] Remove create room button
+- [x] Make user names emojis
+- [ ] Show and game state
 - [ ] Test with ngrok
-- [ ] Remove create room button
-- [ ] Make user names emojis
 - [ ] Maybe do drag and drop
 - [ ] Style the game
 - [ ] Refactor names
