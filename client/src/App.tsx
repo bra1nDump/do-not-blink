@@ -129,7 +129,7 @@ function Game() {
         setAvailableRooms(roomNames);
       });
     }, 500);
-  }, []);
+  });
 
   // Lobby input fields
   const [roomName, setRoomName] = useState("");
