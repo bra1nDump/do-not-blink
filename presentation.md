@@ -7,33 +7,32 @@ marp: true
 # Introductions <!-- +5 minutes -->
 
 * About me
-  * Always wanted to build something cool (not sure if I ever succeeded before today)
-  * Started programming by building iPhone apps with friends and going to hackathons
+  * Have been programming for 7 years
   * Currently at Meta as a Software Engineer
-  * Got Repetitive Strain Injury and have been transitioning to voice coding for the past year. Prepared this presentation without touching my keyboard
-* What did you learn in this class so far?
+  * Use my voice to code
+* What do you do in this class?
 * Today we will be building a multiplayer web browser version of the game called Blink
 * Lets first try playing the table version!
 
 ---
 
-# Understanding Blink <!-- +8 minutes -->
+# What are we doing here?
 
-- How does our game start? <!-- +5  minutes -->
-- How do a player make a move? <!-- +5  minutes -->
-- How does one win? <!-- +5  minutes -->
+* What have you been doing in this class?
+* Building an online version of a game called blink
+* Similar to UNO
+  * Match shape, color or count of cards to play
+  * But not turn based - **GO AS FAST AS YOU CAN**
 
 ---
 
 # Starting
 
-![bg right:45%](game%20state%20example.png)
-
-- Split in groups of 3 or less people and sit at the table
-- Each player gets a deck of 19 cards each (face down)
-- 2 cards are placed face up on the table, these are `stacks`
-- Get 3 cards from your deck and hold them in your `hand`
-
+* Split into groups of 2-3 people - just grab your neighbours
+* Dedicate a team capitan, they will
+  * Take the cards out
+  * Get 2 top cards and put them on the table face up between all the players
+  * Split the reamining cards roughly into 2-3 parts depending on number of players in your group
 ---
 
 # Moving

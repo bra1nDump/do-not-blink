@@ -81,7 +81,7 @@ export class MyRoomState extends Schema {
     handIndex: number,
     tableStackIndex: number
   ) {
-    console.log("Trying to play a card");
+    console.log(`${this.name}: `);
 
     if (this.winner !== undefined) {
       console.log(`Too late to make a move, the winner is ${this.winner}`);

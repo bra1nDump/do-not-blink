@@ -19,6 +19,7 @@ import {
 } from "@colyseus/schema";
 import { Button, ToggleButton, ToggleButtonGroup } from "@mui/material";
 
+var randomEmoji = require("random-emoji");
 //const boopSfx = require("./../beep-01a.mp3");
 
 export class Card extends Schema {
@@ -114,7 +115,14 @@ function Game() {
 
   // Lobby input fields
   const [roomName, setRoomName] = useState("");
-  const [playerName, setPlayerName] = useState("");
+  const [playerName, setPlayerName] = useState(() => {
+    let emojis = randomEmoji
+      .random({ count: 2 })
+      .map((em: any) => em.character)
+      .join("");
+    console.log(emojis);
+    return emojis;
+  });
 
   const [room, setRoom] = useState<Room<MyRoomState> | null>(null);
 
@@ -125,7 +133,7 @@ function Game() {
         roomName: inDevelopmentMode
           ? Math.random().toString().substring(0, 4)
           : roomName,
-        playerName: inDevelopmentMode ? "🤡" : playerName,
+        playerName,
       })
       .then(setRoom);
   }, [roomName, playerName]);
@@ -185,20 +193,11 @@ function Game() {
         />
 
         {/* Player picker */}
-        <div>Choose your warrior:</div>
-        <ToggleButtonGroup
-          exclusive={true}
-          value={playerName}
-          onChange={(_, x) => setPlayerName(x)}
-        >
-          <ToggleButton value="💩">💩</ToggleButton>
-          <ToggleButton value="🤡">🤡</ToggleButton>
-          <ToggleButton value="🗿">🗿</ToggleButton>
-        </ToggleButtonGroup>
+        <div>Your player is ${playerName}</div>
 
         <Button
           // Disable the button if room name or player is not picked
-          disabled={!roomName || !playerName}
+          disabled={!roomName}
           onClick={joinOrCreateOnClick}
         >
           Join or create
@@ -234,7 +233,7 @@ function RoomComponent(props: RoomProps) {
   }, [playFromHandAtIndex, playToStackAtIndex, props]);
 
   useEffect(() => {
-    if (winner === playerName) {
+    if (playerName && winner === playerName) {
       let audio = new Audio(
         "https://file-examples.com/storage/fe0b521bf8623b6639a0f85/2017/11/file_example_MP3_700KB.mp3"
       );
@@ -296,9 +295,8 @@ function RoomComponent(props: RoomProps) {
             );
           })}
       </div>
-      <h1 style={{ margin: "5vw" }}>
-        {playerName} {hand.length} 🃏
-      </h1>
+      <h2 style={{ margin: "3vw" }}>Player: {playerName}</h2>
+      <h2 style={{ margin: "1vw" }}>Remaining 🃏s: {hand.length}</h2>
       <button onClick={() => setvisibleCount(visibleCount + 1)}>Draw</button>
     </>
   );
