@@ -1,1 +1,1 @@
-{"cells":[{"kind":2,"languageId":"shellscript","value":"npx localtunnel --subdomain blink --port 2567","metadata":{}},{"kind":2,"languageId":"shellscript","value":"../ngrok http 2567","metadata":{}}]}
+{"cells":[{"kind":2,"languageId":"shellscript","value":"npx localtunnel --subdomain blink --port 2567","metadata":{}},{"kind":2,"languageId":"shellscript","value":"../ngrok http 2567","metadata":{}},{"kind":2,"languageId":"shellscript","value":"#heroku git:remote -a notblink\n#git push heroku main\nnpm install -s ts-node-dev","metadata":{}}]}

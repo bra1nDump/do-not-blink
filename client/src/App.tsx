@@ -103,8 +103,8 @@ const inDevelopmentMode = process.env.NODE_ENV === "development";
 function Game() {
   let clientAddress = inDevelopmentMode
     ? "ws://localhost:2567"
-    //: "ws://blink.loca.lt";
-    : "ws://notblink.herokuapp.com";
+    : //: "ws://blink.loca.lt";
+      "ws://notblink.herokuapp.com";
   // Creates a client that is connected to our server
   const client = useRef(new Client(clientAddress));
 
@@ -169,7 +169,9 @@ function Game() {
   } else {
     return (
       <>
-        <div>Go to the browser URL and check it starts with HTTP and NOT HTTPS!</div>
+        <div>
+          Go to the browser URL and check it starts with HTTP and NOT HTTPS!
+        </div>
         <div>Room name:</div>
         <input
           value={roomName}
@@ -208,6 +210,7 @@ function RoomComponent(props: RoomProps) {
     props.thisPlayerIdentifier
   );
 
+  const [visibleCount, setvisibleCount] = useState(3);
   const [playFromHandAtIndex, setPlayFromHandAtIndex] = useState<number | null>(
     null
   );
@@ -270,7 +273,7 @@ function RoomComponent(props: RoomProps) {
       <div style={{ display: "flex", justifyContent: "space-around" }}>
         {hand
           .toArray()
-          .slice(0, 3)
+          .slice(0, visibleCount)
           .map((card, index) => {
             return (
               <CardComponent
@@ -284,6 +287,7 @@ function RoomComponent(props: RoomProps) {
       <h1 style={{ margin: "5vw" }}>
         {playerName} {hand.length} 🃏
       </h1>
+      <button onClick={() => setvisibleCount(4)}>Draw</button>
     </>
   );
 }
