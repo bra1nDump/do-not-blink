@@ -120,7 +120,7 @@ A data structure that allows us to look up cards for a given player is called a 
 ---
 # Trying it out! <!-- +10  minutes -->
 
-# Go to http://blink.loca.lt
+# Go to http://notblink.herokuapp.com/
 - With your team decide on a room name and enter in the text box
 - Choose your warriors (cannot join with the same user)
 - Once everyone is in start the game

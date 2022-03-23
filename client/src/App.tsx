@@ -95,6 +95,8 @@ function App() {
   );
 }
 
+http://notblink.herokuapp.com/
+
 // In development mode connect to local host
 const inDevelopmentMode = process.env.NODE_ENV === "development";
 
@@ -167,6 +169,7 @@ function Game() {
   } else {
     return (
       <>
+        <div>Go to the browser URL and check it starts with HTTP and NOT HTTPS!</div>
         <div>Room name:</div>
         <input
           value={roomName}
@@ -264,7 +267,6 @@ function RoomComponent(props: RoomProps) {
         })}
       </div>
 
-      <div style={{ height: "20vw" }}></div>
       <div style={{ display: "flex", justifyContent: "space-around" }}>
         {hand
           .toArray()

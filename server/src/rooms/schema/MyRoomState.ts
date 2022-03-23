@@ -110,5 +110,13 @@ export class MyRoomState extends Schema {
     if (theirDeck.length === 0) {
       this.winner = player.name;
     }
+
+    // this.stacks.toArray().forEach((stack) => {
+    //   // get first card for each stack
+    //   const firstCard = stack.deck.at(0);
+
+    //   const players = Array(this.players.entries());
+    //   for (cons)
+    // });
   }
 }
