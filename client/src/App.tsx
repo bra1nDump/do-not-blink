@@ -287,7 +287,7 @@ function RoomComponent(props: RoomProps) {
       <h1 style={{ margin: "5vw" }}>
         {playerName} {hand.length} 🃏
       </h1>
-      <button onClick={() => setvisibleCount(4)}>Draw</button>
+      <button onClick={() => setvisibleCount(5)}>Draw</button>
     </>
   );
 }
