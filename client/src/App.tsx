@@ -95,7 +95,7 @@ function App() {
   );
 }
 
-http://notblink.herokuapp.com/
+// http://notblink.herokuapp.com/
 
 // In development mode connect to local host
 const inDevelopmentMode = process.env.NODE_ENV === "development";
