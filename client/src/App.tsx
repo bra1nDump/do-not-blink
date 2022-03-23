@@ -113,6 +113,18 @@ function Game() {
   // Creates a client that is connected to our server
   const client = useRef(new Client(clientAddress));
 
+  const [availableRooms, setAvailableRooms] = useState<string[] | null>(null);
+
+  useEffect(() => {
+    client.current.getAvailableRooms<MyRoomState>("my_room").then((rooms) => {
+      const metadata = rooms.at(0)?.metadata;
+      console.log(metadata);
+
+      const roomNames = rooms.map((room) => room.metadata.name);
+      setAvailableRooms(roomNames);
+    });
+  }, []);
+
   // Lobby input fields
   const [roomName, setRoomName] = useState("");
   const [playerName, setPlayerName] = useState(() => {
@@ -130,9 +142,7 @@ function Game() {
   const joinOrCreateOnClick = useCallback(() => {
     client.current
       .joinOrCreate<MyRoomState>("my_room", {
-        roomName: inDevelopmentMode
-          ? Math.random().toString().substring(0, 4)
-          : roomName,
+        roomName,
         playerName,
       })
       .then(setRoom);
@@ -143,7 +153,7 @@ function Game() {
     if (!inDevelopmentMode) {
       return;
     }
-    joinOrCreateOnClick();
+    //joinOrCreateOnClick();
   }, [joinOrCreateOnClick]);
 
   // Room state will be updated every time any player in the room makes a move
@@ -181,8 +191,28 @@ function Game() {
   } else {
     return (
       <>
-        <div>
-          Go to the browser URL and check it starts with HTTP and NOT HTTPS!
+        <div style={{ margin: "3vh" }}>
+          Your browser should show "Not secure" on the top left in the address
+          bar. If it is not, raise your hand!
+        </div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          {availableRooms &&
+            availableRooms.length !== 0 && [
+              <div>Existing rooms (click to join)</div>,
+              ...availableRooms.map((name, i) => {
+                return (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setRoomName(name);
+                      joinOrCreateOnClick();
+                    }}
+                  >
+                    ${name}
+                  </button>
+                );
+              }),
+            ]}
         </div>
         <div>Room name:</div>
         <input
@@ -274,6 +304,7 @@ function RoomComponent(props: RoomProps) {
           const topCard = deck.at(0);
           return (
             <CardComponent
+              key={index}
               card={topCard}
               selected={playToStackAtIndex === index}
               onClick={() => setPlayToStackAtIndex(index)}
@@ -281,6 +312,7 @@ function RoomComponent(props: RoomProps) {
           );
         })}
       </div>
+      <div style={{ height: "5vh" }}></div>
       <div style={{ display: "flex", justifyContent: "space-around" }}>
         {hand
           .toArray()
@@ -288,6 +320,7 @@ function RoomComponent(props: RoomProps) {
           .map((card, index) => {
             return (
               <CardComponent
+                key={index}
                 card={card}
                 selected={playFromHandAtIndex === index}
                 onClick={() => setPlayFromHandAtIndex(index)}
@@ -297,7 +330,9 @@ function RoomComponent(props: RoomProps) {
       </div>
       <h2 style={{ margin: "3vw" }}>Player: {playerName}</h2>
       <h2 style={{ margin: "1vw" }}>Remaining 🃏s: {hand.length}</h2>
-      <button onClick={() => setvisibleCount(visibleCount + 1)}>Draw</button>
+      <button onClick={() => setvisibleCount(visibleCount + 1)}>
+        Draw (if all players are stuck)
+      </button>
     </>
   );
 }

@@ -92,17 +92,13 @@ export class MyRoomState extends Schema {
     const theirDeck = player.deck;
     const destinationStack = this.stacks.at(tableStackIndex);
     if (destinationStack.tryAdd(theirDeck.at(handIndex))) {
-      console.log(
-        "Successfully played card, moving it from player to one of the table stacks"
-      );
+      console.log(`${player.name} played ${destinationStack.deck.at(0)}`);
       // Swap with last card and then delete last card
       // Otherwise the player will observe a shift in their cards
       theirDeck.setAt(handIndex, theirDeck.at(theirDeck.length - 1));
       theirDeck.pop();
     } else {
-      console.log(
-        "Failed to play card, please check with your role book before trying next time :D"
-      );
+      console.log("Failed to play card");
     }
 
     // If the player who just made the move ran out of cards
@@ -115,7 +111,7 @@ export class MyRoomState extends Schema {
     //   // get first card for each stack
     //   const firstCard = stack.deck.at(0);
 
-    //   const players = Array(this.players.entries());
+    //   const players =  key={index}(this.players.entries());
     //   for (cons)
     // });
   }
