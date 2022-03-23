@@ -21,6 +21,9 @@ export default Arena({
     const websiteDirectory = path.resolve(__dirname, "../../client/build");
     app.use(express.static(websiteDirectory));
 
+    const presentationDirectory = path.resolve(__dirname, "../..");
+    app.use(express.static(presentationDirectory));
+
     /**
      * Bind @colyseus/monitor
      * It is recommended to protect this route with a password.

@@ -118,9 +118,9 @@ A data structure that allows us to look up cards for a given player is called a 
 * What else can we store with a Dictionary?
 
 ---
-# Testing the game <!-- +10  minutes -->
+# Trying it out! <!-- +10  minutes -->
 
-# Go to blink.loca.lt
+# Go to http://blink.loca.lt
 - With your team decide on a room name and enter in the text box
 - Choose your warriors (cannot join with the same user)
 - Once everyone is in start the game

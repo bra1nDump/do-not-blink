@@ -1,1 +1,1 @@
-{"cells":[{"kind":2,"languageId":"shellscript","value":"# root\nnpm init colyseus-app server","metadata":{}}]}
+{"cells":[{"kind":2,"languageId":"shellscript","value":"# root\nnpx @marp-team/marp-cli@latest presentation.md --output build/presentation.html","metadata":{}}]}

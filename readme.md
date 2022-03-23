@@ -20,6 +20,8 @@
   - [ ] It is kind of slow, maybe try deploying it
 - [ ] Refactor namesi
 - [ ] Maybe do drag and drop
+- [ ] Smaller layout height
+- [ ] Reload note if doesn't work
 
 ## Technical resources
 
