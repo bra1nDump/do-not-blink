@@ -101,23 +101,6 @@ A server is just a computer, in our case my computer is the server. How does a c
   * Cards players have
 
 ---
-
-# How do we store things?
-
-A data structure that stores each card stack is called a `List`
-* It looks like this: `[ card 1, card 2, ... ]`
-* > Pro tip: lists support operations like "Give me the first card!" or "Insert a new first card!"
-
-A data structure that allows us to look up cards for a given player is called a `Dictionary`
-```
-{
-  💩 : poopy cards,
-  🤡 : clowny cards
-}
-```
-* What else can we store with a Dictionary?
-
----
 # Trying it out! <!-- +10  minutes -->
 
 # Go to http://notblink.herokuapp.com/

@@ -8,6 +8,8 @@ import React, {
 import { Client, Room } from "colyseus.js";
 import "./App.css";
 
+import useSound from "use-sound";
+
 import {
   Schema,
   Context,
@@ -16,6 +18,8 @@ import {
   MapSchema,
 } from "@colyseus/schema";
 import { Button, ToggleButton, ToggleButtonGroup } from "@mui/material";
+
+//const boopSfx = require("./../beep-01a.mp3");
 
 export class Card extends Schema {
   @type("string") shape: string;
@@ -229,6 +233,15 @@ function RoomComponent(props: RoomProps) {
     }
   }, [playFromHandAtIndex, playToStackAtIndex, props]);
 
+  useEffect(() => {
+    if (winner === playerName) {
+      let audio = new Audio(
+        "https://file-examples.com/storage/fe0b521bf8623b6639a0f85/2017/11/file_example_MP3_700KB.mp3"
+      );
+      audio.play();
+    }
+  }, [winner, playerName]);
+
   // Winner field from the game server matches our own name
   // This must mean we won
   if (winner === playerName) {
@@ -269,7 +282,6 @@ function RoomComponent(props: RoomProps) {
           );
         })}
       </div>
-
       <div style={{ display: "flex", justifyContent: "space-around" }}>
         {hand
           .toArray()
@@ -287,7 +299,7 @@ function RoomComponent(props: RoomProps) {
       <h1 style={{ margin: "5vw" }}>
         {playerName} {hand.length} 🃏
       </h1>
-      <button onClick={() => setvisibleCount(5)}>Draw</button>
+      <button onClick={() => setvisibleCount(visibleCount + 1)}>Draw</button>
     </>
   );
 }
