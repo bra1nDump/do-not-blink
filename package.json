@@ -1,0 +1,22 @@
+{
+  "name": "do-not-blink",
+  "version": "1.0.0",
+  "description": "- 2 / When you are playing a computer game what holds it's state?   - The computer   - What about multiplayer games?     - Computer you are playing on. Knon as the client     - A computer that all players connect to. Known as the server.",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm start --prefix ./server",
+    "build": "npx @marp-team/marp-cli@latest presentation.md --output presentation.html && cd client npm build",
+    //"heroku-postbuild": "ng build --prod", // this will be run on Heroku
+    "postinstall": "npm install --prefix ./client && npm install --prefix ./server "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bra1nDump/do-not-blink.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bra1nDump/do-not-blink/issues"
+  },
+  "homepage": "https://github.com/bra1nDump/do-not-blink#readme"
+}

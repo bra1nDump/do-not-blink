@@ -23,6 +23,9 @@
 - [ ] Smaller layout height
 - [ ] Reload note if doesn't work
 
+deploy server folder
+I need root/ presentation in the server dir & client in server
+
 ## Technical resources
 
 - https://create-react-app.dev/docs/proxying-api-requests-in-development
