@@ -116,13 +116,19 @@ function Game() {
   const [availableRooms, setAvailableRooms] = useState<string[] | null>(null);
 
   useEffect(() => {
-    client.current.getAvailableRooms<MyRoomState>("my_room").then((rooms) => {
-      const metadata = rooms.at(0)?.metadata;
-      console.log(metadata);
+    setTimeout(() => {
+      client.current.getAvailableRooms<MyRoomState>("my_room").then((rooms) => {
+        const metadata = rooms.at(0)?.metadata;
+        console.log(metadata);
 
-      const roomNames = rooms.map((room) => room.metadata.name);
-      setAvailableRooms(roomNames);
-    });
+        const roomNames = rooms
+          .filter((room) => {
+            return (room.metadata as any).playerCount <= 2;
+          })
+          .map((room) => room.metadata.name);
+        setAvailableRooms(roomNames);
+      });
+    }, 500);
   }, []);
 
   // Lobby input fields
@@ -230,7 +236,7 @@ function Game() {
           disabled={!roomName}
           onClick={joinOrCreateOnClick}
         >
-          Join or create
+          Create
         </Button>
       </>
     );
@@ -239,9 +245,19 @@ function Game() {
 
 function RoomComponent(props: RoomProps) {
   const { name: roomName, players, stacks, winner } = props.state;
+  // const otherPlayers = Array(...players.values()).map((player) => {
+  //   return player.name;
+  // });
+  let playerNames: string[] = [];
+  players.forEach((player) => {
+    playerNames.push(player.name);
+  });
+
   const { name: playerName, deck: hand } = players.get(
     props.thisPlayerIdentifier
   );
+
+  playerNames = playerNames.filter((name) => name !== playerName);
 
   const [visibleCount, setvisibleCount] = useState(3);
   const [playFromHandAtIndex, setPlayFromHandAtIndex] = useState<number | null>(
@@ -298,6 +314,7 @@ function RoomComponent(props: RoomProps) {
   return (
     <>
       <h4 style={{ margin: "5vw" }}>Room {roomName}</h4>
+      <h4>Other players {playerNames.join(", ")}</h4>
       <div>Stacks on the table</div>
       <div style={{ display: "flex", justifyContent: "space-around" }}>
         {stacks.map(({ deck }, index) => {

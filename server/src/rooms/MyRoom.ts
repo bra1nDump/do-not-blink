@@ -28,6 +28,10 @@ export class MyRoom extends Room<MyRoomState> {
       console.log(`There already exists a player with a name ${playerName}`);
       return false;
     } else {
+      this.setMetadata({
+        ...this.metadata,
+        playerCount: [...this.state.players.keys()].length,
+      });
       return true;
     }
   }
