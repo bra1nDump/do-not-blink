@@ -18,7 +18,7 @@
 - [ ] Insert code snippets into the presentation. This will allow us to think about changing the code without looking in the entire code base
 - [x] Test with ngrok, and local tunnel
   - [ ] It is kind of slow, maybe try deploying it
-- [ ] Refactor names
+- [ ] Refactor namesi
 - [ ] Maybe do drag and drop
 
 ## Technical resources

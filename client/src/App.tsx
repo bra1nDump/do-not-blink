@@ -101,7 +101,7 @@ const inDevelopmentMode = process.env.NODE_ENV === "development";
 function Game() {
   let clientAddress = inDevelopmentMode
     ? "ws://localhost:2567"
-    : "ws://do-not-blink.loca.lt";
+    : "ws://blink.loca.lt";
   // : "ws://6ac3-2601-647-5a00-60e0-e9be-dbd8-a689-6a4.ngrok.io/";
   // Creates a client that is connected to our server
   const client = useRef(new Client(clientAddress));
@@ -118,7 +118,7 @@ function Game() {
       .joinOrCreate<MyRoomState>("my_room", {
         roomName: inDevelopmentMode
           ? Math.random().toString().substring(0, 4)
-          : playerName,
+          : roomName,
         playerName: inDevelopmentMode ? "🤡" : playerName,
       })
       .then(setRoom);
@@ -249,7 +249,7 @@ function RoomComponent(props: RoomProps) {
 
   return (
     <>
-      <h3 style={{ margin: "5vw", textAlign: "left" }}>Room {roomName}</h3>
+      <h4 style={{ margin: "5vw" }}>Room {roomName}</h4>
       <div>Stacks on the table</div>
       <div style={{ display: "flex", justifyContent: "space-around" }}>
         {stacks.map(({ deck }, index) => {
@@ -264,7 +264,7 @@ function RoomComponent(props: RoomProps) {
         })}
       </div>
 
-      <div style={{ height: "10em" }}></div>
+      <div style={{ height: "20vw" }}></div>
       <div style={{ display: "flex", justifyContent: "space-around" }}>
         {hand
           .toArray()
@@ -280,7 +280,7 @@ function RoomComponent(props: RoomProps) {
           })}
       </div>
       <h1 style={{ margin: "5vw" }}>
-        {playerName} {hand.length}🃏
+        {playerName} {hand.length} 🃏
       </h1>
     </>
   );
@@ -346,6 +346,7 @@ function CardComponent(props: CardComponentProps) {
           WebkitTextFillColor: color,
           backgroundColor: "white",
           fontWeight: "bold",
+          fontFamily: "monospace",
 
           margin: "0.3em",
 

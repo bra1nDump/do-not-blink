@@ -95,7 +95,10 @@ export class MyRoomState extends Schema {
       console.log(
         "Successfully played card, moving it from player to one of the table stacks"
       );
-      theirDeck.deleteAt(handIndex);
+      // Swap with last card and then delete last card
+      // Otherwise the player will observe a shift in their cards
+      theirDeck.setAt(handIndex, theirDeck.at(theirDeck.length - 1));
+      theirDeck.pop();
     } else {
       console.log(
         "Failed to play card, please check with your role book before trying next time :D"
