@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Client, Room } from "colyseus.js";
+import { Client, Room, RoomAvailable } from "colyseus.js";
 import "./App.css";
 
 import useSound from "use-sound";
@@ -113,7 +113,11 @@ function Game() {
   // Creates a client that is connected to our server
   const client = useRef(new Client(clientAddress));
 
-  const [availableRooms, setAvailableRooms] = useState<string[] | null>(null);
+  const [availableRooms, setAvailableRooms] = useState<
+    RoomAvailable<MyRoomState>[] | null
+  >(null);
+
+  const [triggerNewFetch, setTriggerNewFetch] = useState<number>(0);
 
   useEffect(() => {
     setTimeout(() => {
@@ -122,15 +126,16 @@ function Game() {
         const metadata = rooms.at(0)?.metadata;
         console.log(metadata);
 
-        const roomNames = rooms
-          .filter((room) => {
-            return (room.metadata as any).playerCount <= 2;
-          })
-          .map((room) => room.metadata.name);
-        setAvailableRooms(roomNames);
+        // const roomNames = rooms;
+        // .filter((room) => {
+        //   return (room.metadata as any).playerCount <= 2;
+        // })
+        // .map((room) => room.metadata.name);
+        setAvailableRooms(rooms);
       });
+      setTriggerNewFetch(triggerNewFetch + 1);
     }, 500);
-  }, []);
+  }, [triggerNewFetch]);
 
   // Lobby input fields
   const [roomName, setRoomName] = useState("");
@@ -152,7 +157,12 @@ function Game() {
         roomName,
         playerName,
       })
-      .then(setRoom);
+      .then(setRoom)
+      .catch((error) => {
+        window.alert(
+          "Error connecting, check that:\n1. You are connected to a hotspot, not LAUSD wifi\n2. Your browser says Not secure in the top left corner. If it doesnt, click on your URL to check and make sure your link starts with http://, NOT https://"
+        );
+      });
   }, [roomName, playerName]);
 
   // Immediately dropped into a room for debugging UI
@@ -206,7 +216,8 @@ function Game() {
           {availableRooms &&
             availableRooms.length !== 0 && [
               <div>Existing rooms (click to join)</div>,
-              ...availableRooms.map((name, i) => {
+              ...availableRooms.map((room, i) => {
+                const { name } = room.metadata;
                 return (
                   <button
                     key={i}
@@ -215,7 +226,7 @@ function Game() {
                       joinOrCreateOnClick();
                     }}
                   >
-                    ${name}
+                    {name}, players: {(room.metadata as any).playerCount}
                   </button>
                 );
               }),
@@ -228,10 +239,8 @@ function Game() {
             setRoomName(e.target.value);
           }}
         />
-
         {/* Player picker */}
         <div>Your player is ${playerName}</div>
-
         <Button
           // Disable the button if room name or player is not picked
           disabled={!roomName}
