@@ -117,6 +117,7 @@ function Game() {
 
   useEffect(() => {
     setTimeout(() => {
+      console.log("getAvailableRooms");
       client.current.getAvailableRooms<MyRoomState>("my_room").then((rooms) => {
         const metadata = rooms.at(0)?.metadata;
         console.log(metadata);
@@ -129,7 +130,7 @@ function Game() {
         setAvailableRooms(roomNames);
       });
     }, 500);
-  });
+  }, []);
 
   // Lobby input fields
   const [roomName, setRoomName] = useState("");
