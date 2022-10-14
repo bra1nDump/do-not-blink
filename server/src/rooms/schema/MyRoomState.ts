@@ -73,7 +73,12 @@ export class MyRoomState extends Schema {
   constructor(name: string) {
     super();
     this.name = name;
-    this.stacks.unshift(new TableStack(), new TableStack());
+    this.stacks.unshift(
+      new TableStack(),
+      new TableStack(),
+      new TableStack(),
+      new TableStack()
+    );
   }
 
   tryPlayCard(
@@ -89,21 +94,21 @@ export class MyRoomState extends Schema {
     }
 
     const player = this.players.get(playerIdentifier);
-    const theirDeck = player.deck;
+    const hand = player.deck;
     const destinationStack = this.stacks.at(tableStackIndex);
-    if (destinationStack.tryAdd(theirDeck.at(handIndex))) {
+    if (destinationStack.tryAdd(hand.at(handIndex))) {
       console.log(`${player.name} played ${destinationStack.deck.at(0)}`);
       // Swap with last card and then delete last card
       // Otherwise the player will observe a shift in their cards
-      theirDeck.setAt(handIndex, theirDeck.at(theirDeck.length - 1));
-      theirDeck.pop();
+      hand.setAt(handIndex, hand.at(hand.length - 1));
+      hand.pop();
     } else {
       console.log("Failed to play card");
     }
 
     // If the player who just made the move ran out of cards
     // declare them the winner
-    if (theirDeck.length === 0) {
+    if (hand.length === 0) {
       this.winner = player.name;
     }
 

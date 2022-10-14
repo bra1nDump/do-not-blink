@@ -6,7 +6,7 @@ export class MyRoom extends Room<MyRoomState> {
   onCreate(options: any) {
     this.setState(new MyRoomState(options.roomName));
     this.setMetadata({ name: options.roomName });
-    this.maxClients = 3;
+    this.maxClients = 20;
 
     this.onMessage(
       "try play card",
