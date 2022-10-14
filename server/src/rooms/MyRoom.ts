@@ -30,7 +30,7 @@ export class MyRoom extends Room<MyRoomState> {
     } else {
       this.setMetadata({
         ...this.metadata,
-        playerCount: [...this.state.players.keys()].length,
+        playerCount: [...this.state.players.keys()].length + 1,
       });
       return true;
     }
