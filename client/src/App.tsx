@@ -108,8 +108,7 @@ const inDevelopmentMode = process.env.NODE_ENV === "development";
 function Game() {
   let clientAddress = inDevelopmentMode
     ? "ws://localhost:2567"
-    : //: "ws://blink.loca.lt";
-      "ws://notblink.herokuapp.com";
+    : `wss://${window.location.hostname}`;
   // Creates a client that is connected to our server
   const client = useRef(new Client(clientAddress));
 
