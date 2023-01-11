@@ -6,7 +6,7 @@
   "scripts": {
     "start": "npm start --prefix ./server",
     "build": "npx @marp-team/marp-cli@latest presentation.md --output presentation.html && npm run build --prefix ./client",
-    "postinstall": "npm install --prefix ./client && npm install --prefix ./server && npm install --prefix ./server "
+    "postinstall": "npm install --prefix ./client && npm install --prefix ./server"
   },
   "repository": {
     "type": "git",

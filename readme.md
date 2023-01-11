@@ -18,6 +18,9 @@ There are 3 components:
 - Website aka Frontend aka Client. This is the UI of the project. /client
 - Server aka Game server aka express application. It both runs the game server && serves static files for the Presentation and Website.
 
+## Server
+I never actually used the build script in the server, it does some weird thing an produces a couple of javascript files, which I'm not assure how to start. I simply use the start script provided by the colyseus library. It starts the server in transpile mode from server/src/index.ts and serves the static files from the `client/build` directory.
+
 [Key] Most initialization code lives in `server/src/arena.config.ts`
 - It creates room definition
 - It initializes express and starts serving the presentaiton & website itself
@@ -27,6 +30,20 @@ Currently the game is served on herokuapp.com, it was free at the time but now t
 Currently to deploy to heroku you need to simply `git push main` (assuming you have github x heroku hooked up like I do on my account, needs additional setup, easy to google).
 
 The url of the app is http://notblink.herokuapp.com.
+
+## Heroku workflow
+- Building `npm run build` You can see build logs in the heroku console https://dashboard.heroku.com/apps/notblink/activity
+- Deployment `npm run start` https://devcenter.heroku.com/articles/deploying-nodejs#specifying-a-start-script
+
+To run locally using Heroku `heroku local web --port 3000`
+
+# Technical issues with presenting at schools
+## School restricting access to the website
+At this point I don't remember why the school blocks the website, I'm assuming because it was not https.
+[Key] Les be prepared to hotspot, make sure to test this out before presenting
+
+## People get the link wrong
+[Key] Make sure to give them the link in the presentation, and also post it to schoology
 
 # Presentation
 
@@ -79,7 +96,7 @@ Areas you can work in
 - Commerce  Amazon 
 - Games
 
-Each area and part of the process requires special knowledge, but at all starts with engineering design, team work .
+Each area and part of the process requires special knowledge, but at all starts with engineering design, team work.
 
 
 # Game Itself
