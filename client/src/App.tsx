@@ -149,6 +149,15 @@ function App() {
 // In development mode connect to local host
 const inDevelopmentMode = process.env.NODE_ENV === "development";
 
+function generarateRandomEmojis(): string {
+  let emojis = randomEmoji
+    .random({ count: 2 })
+    .map((em: any) => em.character)
+    .join("");
+  console.log(emojis);
+  return emojis;
+}
+
 function Game() {
   let clientAddress = inDevelopmentMode
     ? "ws://localhost:2567"
@@ -194,14 +203,7 @@ function Game() {
 
   // Lobby input fields
   const [roomName, setRoomName] = useState("");
-  const [playerName, setPlayerName] = useState(() => {
-    let emojis = randomEmoji
-      .random({ count: 2 })
-      .map((em: any) => em.character)
-      .join("");
-    console.log(emojis);
-    return emojis;
-  });
+  const [playerName, setPlayerName] = useState(generarateRandomEmojis);
 
   const [room, setRoom] = useState<Room<MyRoomState> | null>(null);
 
@@ -209,7 +211,7 @@ function Game() {
   const joinOrCreateOnClick = useCallback(() => {
     client.current
       .joinOrCreate<MyRoomState>("my_room", {
-        roomName,
+        roomName: generarateRandomEmojis(),
         playerName,
       })
       .then(setRoom)
@@ -310,7 +312,7 @@ function Game() {
         {configuration.lobby.createButton && (
           <Button
             // Disable the button if room name or player is not picked
-            disabled={!roomName}
+            // disabled={!roomName}
             onClick={joinOrCreateOnClick}
           >
             Create
@@ -324,7 +326,10 @@ function Game() {
 function RoomComponent(props: RoomProps) {
   const { name: roomName, startDate, players, stacks, winner } = props.state;
 
-  const isStarted = new Date().getTime() > startDate;
+  const secondsUntilStart = new Date(
+    startDate - new Date().getTime()
+  ).getSeconds();
+  const isStarted = secondsUntilStart < 0;
 
   const {
     showStacksOnTheTable,
@@ -336,16 +341,18 @@ function RoomComponent(props: RoomProps) {
   } = props.interfaceConfiguration;
 
   // Fort each used instead of map because the Colleseus framework doesn't support map
-  let playerNames: string[] = [];
+  let playerNamesAndCardsRemaining: [string, number][] = [];
   players.forEach((player) => {
-    playerNames.push(player.name);
+    playerNamesAndCardsRemaining.push([player.name, player.deck.length]);
   });
 
   const { name: playerName, deck: hand } = players.get(
     props.thisPlayerIdentifier
   );
 
-  playerNames = playerNames.filter((name) => name !== playerName);
+  // playerNamesAndCardsRemaining = playerNamesAndCardsRemaining.filter(
+  //   (name) => name !== playerName
+  // );
 
   const [visibleCount, setvisibleCount] = useState(3);
   const [playFromHandAtIndex, setPlayFromHandAtIndex] = useState<number | null>(
@@ -402,14 +409,20 @@ function RoomComponent(props: RoomProps) {
   return (
     <>
       <h4 style={{ marginBlockStart: "1vw", marginBlockEnd: "1vw" }}>
-        Room {roomName} {isStarted ? "- Started" : "- Not Started"}{" "}
+        Room {roomName}{" "}
+        {isStarted ? "- Started" : `- Until start ${secondsUntilStart}s`}{" "}
       </h4>
 
       {/* Opponents */}
+
       {showOpponents && (
         <>
           <h4 style={{ marginBlockStart: "1vw", marginBlockEnd: "1vw" }}>
-            Other players {playerNames.join(", ")}
+            All players{" "}
+            {playerNamesAndCardsRemaining
+              .sort(([, a], [, b]) => a - b)
+              .map(([userName, cardCount]) => `${userName}: ${cardCount}`)
+              .join(", ")}
           </h4>
         </>
       )}

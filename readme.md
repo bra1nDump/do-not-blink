@@ -138,6 +138,9 @@ Each area and part of the process requires special knowledge, but at all starts 
 
 # To Do
 
+- Rank other playrs by how many cards they have left
+- Show count of remaining cards for each player
+
 ## Less important
 
 - Maybe do drag and drop
