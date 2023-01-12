@@ -4,9 +4,11 @@
   "description": "- 2 / When you are playing a computer game what holds it's state?   - The computer   - What about multiplayer games?     - Computer you are playing on. Knon as the client     - A computer that all players connect to. Known as the server.",
   "main": "index.js",
   "scripts": {
+    "postinstall": "npm install --prefix ./client && npm install --prefix ./server",
+    "build-presentation": "npx @marp-team/marp-cli@latest presentation.md --output presentation.html",
+    "build": "npm run build-presentation && npm run build --prefix ./client",
     "start": "npm start --prefix ./server",
-    "build": "npx @marp-team/marp-cli@latest presentation.md --output presentation.html && npm run build --prefix ./client",
-    "postinstall": "npm install --prefix ./client && npm install --prefix ./server"
+    "watch-presentation": "npx chokidar '*.md' -c 'npm run build-presentation' --initial & npx http-server ./ -c-1 -p 8080 -o presentation.html"
   },
   "repository": {
     "type": "git",
@@ -20,6 +22,7 @@
   "homepage": "https://github.com/bra1nDump/do-not-blink#readme",
   "devDependencies": {
     "@marp-team/marp-cli": "^2.3.0",
-    "chokidar-cli": "^3.0.0"
+    "chokidar-cli": "^3.0.0",
+    "http-server": "^14.1.1"
   }
 }

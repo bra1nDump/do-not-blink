@@ -4,19 +4,27 @@ marp: true
 
 <!-- _backgroundImage: 'url(./greetings-background.png)' -->
 
+
 # Introductions <!-- +5 minutes -->
 
 * About me
-  * Have been programming for 7 years
-  * Currently at Meta as a Software Engineer
-  * Use my voice to code
-* What do you do in this class?
-* Today we will be building a multiplayer web browser version of the game called Blink
-* Lets first try playing the table version!
+  - Have been programming for 7 years
+  - Ex Meta (Facebook) Software Engineer
+  - Use my voice to code
+* How does your typical class look like?
 
 ---
 
-# What are we doing here?
+# Today
+- Any guesses what will we do today?
+* We will **play Blink, a game similar to UNO**
+* **Build a website** for this game
+* **Play Blink on our website**
+* Improve our game
+
+---
+
+<!-- # What are we doing here?
 
 * What have you been doing in this class?
 * Building an online version of a game called blink
@@ -24,35 +32,42 @@ marp: true
   * Match shape, color or count of cards to play
   * But not turn based - **GO AS FAST AS YOU CAN**
 
+--- -->
+
+# Starting the game
+
+- Split into groups of 2-4 people - just grab your neighbours
+- Dedicate a team capitan, they will
+  - Take the cards out
+  - Get 2 top cards and put them on the table face up between all the players
+  - Split the reamining cards roughly into equal piles for each player
+- Each player should take top 3 cards from their pile
 ---
 
-# Starting
-
-* Split into groups of 2-3 people - just grab your neighbours
-* Dedicate a team capitan, they will
-  * Take the cards out
-  * Get 2 top cards and put them on the table face up between all the players
-  * Split the reamining cards roughly into 2-3 parts depending on number of players in your group
----
-
-# Moving
+# Making a move
 
 ![bg right:45%](game%20state%20example.png)
 
-- You can play a card from your `hand` to a `stack`
-- **If your card matches one of the features (shape, color or count)** of the card on top of a `stack`
-- Which moves can you make here?
+* Similar to UNO 
+  - Match numbers and colors to play a card
+  - Who gets rid of all cards first wins
+* Different from UNO
+  - No turns - **GO AS FAST AS YOU CAN**
+* **Which moves can you make here?**
 
 ---
 
 ![bg left](winning.jpeg)
 
 - The first player to run out of cards wins
+- Remember, there are no turns here - **GO AS FAST AS YOU CAN**
 - Let's play a round!
 
----
+<!-- ---
 
-# Modeling the game <!-- +15 minutes to do include pictures and code references -->
+-- Replaced with the interactive demo
+
+# Modeling the game 
 
 What does the minimal version of our game need?
 
@@ -62,8 +77,8 @@ What does our player need to play?
 * Ability to see cards on the table - `stacks`
 * Ability to see their cards - `hand`
 * Ability to to make a move
-* Ability to know when they won or lost
-
+* Ability to know when they won or lost -->
+<!-- 
 ---
 
 ## What will the website 👶 look like for our game?
@@ -75,7 +90,7 @@ What does our player need to play?
 * Why did I highlight **given information**?
   * Because with every move the `stack` contents change!
   * How do the other players know a `stack` has changed?
-  * We need a **magic server** 🧙 
+  * We need a **magic server** 🧙
 
 ---
 
@@ -89,6 +104,7 @@ What does our player need to play?
 * 📢 Notifies each player that the game has changed
 * 🏆 Detects when a player runs out of cards and declares them a winner
 
+
 ---
 
 # Knowing everything about the game 🦉
@@ -99,36 +115,49 @@ A server is just a computer, in our case my computer is the server. How does a c
   * `Stacks` on the table
   * Cards players have
 
----
-# Trying it out! <!-- +10  minutes -->
+--->
 
-# Go to http://notblink.herokuapp.com/
-- With your team decide on a room name and enter in the text box
-- Choose your warriors (cannot join with the same user)
-- Once everyone is in start the game
-- If you have any problems - ASK
+---
+# Lets build the web version of the game! <!-- +10  minutes -->
+
+# Open https://www.dont-blink.app
+
+* Oh no ... its empty! Kirill must have failed
+* **Incorrect - I never fail**
+
+---
+
+# You will build the game yourself!
+- You will tell me what our website needs to show
+- It will magically 🧙 happen
+
+<!-- Next we play the game, observe the game state, discuss logic of the game -->
+
 ---
 
 # Changing the game <!-- +7  minutes -->
 
-How can we change the game? Would this change go on the client 👶 or the server 🧙?
-  * Display remaining card count of other players.
-  * Reveal an additional card
+How can we change the game?
+  - [Done] Display remaining card count of other players.
+  - [Done] Reveal an additional card
   * Display emoji of the player who's card is on top of the stack
   * If player makes a wrong turn, give them an extra card
 
 ---
 
-# Closing notes <!-- +3  minutes -->
+# What process does this remind you of?
+
+--- 
+
 
 ![bg right:40% w:550](engineering%20design%20process%202.jpeg)
 
-* How did we apply engineering design process today?
-  * Explore - played the game
-  * Design - described in plain english how the game would work
-  * Create - implemented the first draft
-  * Try it out - tested
-  * Make it better - improved it as a group
+# Engineering design process:
+* Explore - played the game
+* Design - described in plain english how the game would work
+* Create - implemented the first draft
+* Try it out - tested
+* Make it better - improved it as a group
 
 ---
 
@@ -136,6 +165,13 @@ How can we change the game? Would this change go on the client 👶 or the serve
 
 ![bg left:40%](entertained.jpeg)
 
-- Presentation link
-- Tools used colyseus, react, ngrok
-- It took me ~24 hours to prepare this
+
+- Tools used:
+  - Language - Typescript
+  - Game server - Colyseus
+  - Interface - React, HTML, CSS
+  - Hosting the website - Heroku 
+  - Revealing UI - Firebase Realtime Database
+- It took me ~40 hours to prepare this
+- Presentation - https://www.dont-blink.app/presentation.html
+- Source code - https://github.com/bra1nDump/do-not-blink

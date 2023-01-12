@@ -1,3 +1,10 @@
+# Access
+
+- The game: https://www.dont-blink.app
+- Presentation: https://www.dont-blink.app/presentation.html
+- Game server admin panel: https://www.dont-blink.app/colyseus
+- Firebase realtime database (to reveal interface step by step): https://console.firebase.google.com/u/0/project/do-not-blink-id/database/do-not-blink-id-default-rtdb/data
+
 # Run the game
 
 Initialization code lives in top level `package.json`
