@@ -186,11 +186,6 @@ function Game() {
   useEffect(() => {
     setTimeout(() => {
       client.current.getAvailableRooms<MyRoomState>("my_room").then((rooms) => {
-        // const roomNames = rooms;
-        // .filter((room) => {
-        //   return (room.metadata as any).playerCount <= 2;
-        // })
-        // .map((room) => room.metadata.name);
         setAvailableRooms(rooms);
       });
       setTriggerNewFetch(triggerNewFetch + 1);
@@ -329,11 +324,7 @@ function Game() {
 function RoomComponent(props: RoomProps) {
   const { name: roomName, startDate, players, stacks, winner } = props.state;
 
-  //
   const isStarted = new Date().getTime() > startDate;
-  console.log("Start time");
-  console.log(startDate * 1000);
-  console.log(new Date().getTime() * 1000);
 
   const {
     showStacksOnTheTable,
@@ -410,14 +401,16 @@ function RoomComponent(props: RoomProps) {
 
   return (
     <>
-      {!isStarted && <div>Not started</div>}
-      {isStarted && <div>Started</div>}
-      <h4 style={{ margin: "5vw" }}>Room {roomName}</h4>
+      <h4 style={{ marginBlockStart: "1vw", marginBlockEnd: "1vw" }}>
+        Room {roomName} {isStarted ? "- Started" : "- Not Started"}{" "}
+      </h4>
 
       {/* Opponents */}
       {showOpponents && (
         <>
-          <h4>Other players {playerNames.join(", ")}</h4>
+          <h4 style={{ marginBlockStart: "1vw", marginBlockEnd: "1vw" }}>
+            Other players {playerNames.join(", ")}
+          </h4>
         </>
       )}
 
@@ -471,16 +464,15 @@ function RoomComponent(props: RoomProps) {
       {/* Player name */}
       {showPlayerName && (
         <>
-          <h2 style={{ margin: "3vw" }}>Player: {playerName}</h2>
+          <h2 style={{ margin: "3vw" }}>
+            Player: {playerName}
+            {", "}
+            {showHandCount && `🃏s remaining: ${hand.length}`}
+          </h2>
         </>
       )}
 
       {/* Cards to get rid of */}
-      {showHandCount && (
-        <>
-          <h2 style={{ margin: "1vw" }}>Remaining 🃏s: {hand.length}</h2>
-        </>
-      )}
 
       {/* Unstuck controls */}
       {showDrawIfStuck && (
