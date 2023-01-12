@@ -48,11 +48,18 @@ const defaultUIConfiguration = {
     showDrawIfStuck: false,
     showOpponents: false,
   },
+  // Forces all elements to be enabled when true
+  // For debugging purpuses
+  enableAll: false,
 };
 type UIConfiguration = typeof defaultUIConfiguration;
 
 // Print out to easily update the firebase database
 console.log(JSON.stringify(defaultUIConfiguration, null, 2));
+
+// Used to flip all flags
+const objectMap = (obj: any, fn: (v: any) => any) =>
+  Object.fromEntries(Object.entries(obj).map(([k, v], i) => [k, fn(v)]));
 
 var randomEmoji = require("random-emoji");
 //const boopSfx = require("./../beep-01a.mp3");
@@ -113,6 +120,7 @@ export class MyRoomState extends Schema {
 
   @type("string") name: string;
   @type("string") winner?: string;
+  @type("number") startDate: number;
 
   @type([TableStack]) stacks = new ArraySchema<TableStack>();
   @type({ map: Player }) players = new MapSchema<Player>();
@@ -153,9 +161,19 @@ function Game() {
   );
   useEffect(() => {
     onValue(ref(database), (snapshot) => {
-      const newConfiguration = snapshot.val();
+      const newConfiguration: UIConfiguration = snapshot.val();
       console.table(newConfiguration);
-      setConfiguration({ ...newConfiguration });
+
+      // Enable all elements
+      if (newConfiguration.enableAll) {
+        setConfiguration({
+          lobby: objectMap(newConfiguration.lobby, () => true),
+          game: objectMap(newConfiguration.game, () => true),
+          enableAll: true,
+        } as UIConfiguration);
+      } else {
+        setConfiguration({ ...newConfiguration });
+      }
     });
   }, []);
 
@@ -212,7 +230,7 @@ function Game() {
     if (!inDevelopmentMode) {
       return;
     }
-    joinOrCreateOnClick();
+    // joinOrCreateOnClick();
   }, [joinOrCreateOnClick]);
 
   // Room state will be updated every time any player in the room makes a move
@@ -309,7 +327,14 @@ function Game() {
 }
 
 function RoomComponent(props: RoomProps) {
-  const { name: roomName, players, stacks, winner } = props.state;
+  const { name: roomName, startDate, players, stacks, winner } = props.state;
+
+  //
+  const isStarted = new Date().getTime() > startDate;
+  console.log("Start time");
+  console.log(startDate * 1000);
+  console.log(new Date().getTime() * 1000);
+
   const {
     showStacksOnTheTable,
     showPlayerName,
@@ -385,6 +410,8 @@ function RoomComponent(props: RoomProps) {
 
   return (
     <>
+      {!isStarted && <div>Not started</div>}
+      {isStarted && <div>Started</div>}
       <h4 style={{ margin: "5vw" }}>Room {roomName}</h4>
 
       {/* Opponents */}
@@ -428,7 +455,12 @@ function RoomComponent(props: RoomProps) {
                     key={index}
                     card={card}
                     selected={playFromHandAtIndex === index}
-                    onClick={() => setPlayFromHandAtIndex(index)}
+                    onClick={() => {
+                      // If we prevent this code from being run before timeout - we are good
+                      if (isStarted) {
+                        setPlayFromHandAtIndex(index);
+                      }
+                    }}
                   />
                 );
               })}

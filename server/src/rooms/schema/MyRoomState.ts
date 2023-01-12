@@ -65,6 +65,9 @@ export class TableStack extends Deck {
 
 export class MyRoomState extends Schema {
   @type("string") name: string;
+  // Coleseus library does not support 'date', we will represent the date
+  // using a number 1970 Jan 1, in miliseconds
+  @type("number") startDate: number;
   @type("string") winner?: string;
 
   @type([TableStack]) stacks = new ArraySchema<TableStack>();
@@ -73,12 +76,11 @@ export class MyRoomState extends Schema {
   constructor(name: string) {
     super();
     this.name = name;
-    this.stacks.unshift(
-      new TableStack(),
-      new TableStack(),
-      new TableStack(),
-      new TableStack()
-    );
+    // We want the game to be locked for first 1 minute after start
+    // Now + 1 minute
+    this.startDate = new Date().getTime() + 60 * 1000;
+
+    this.stacks.unshift(new TableStack(), new TableStack(), new TableStack());
   }
 
   tryPlayCard(

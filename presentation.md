@@ -140,6 +140,7 @@ A server is just a computer, in our case my computer is the server. How does a c
 How can we change the game?
   - [Done] Display remaining card count of other players.
   - [Done] Reveal an additional card
+  - [Done] Countdown to start the game
   * Display emoji of the player who's card is on top of the stack
   * If player makes a wrong turn, give them an extra card
 
