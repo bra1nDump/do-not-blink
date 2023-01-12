@@ -1,0 +1,16 @@
+{
+    "lobby": {
+        "listExistingRooms": true,
+        "showRoomNamePicker": true,
+        "createButton": true,
+        "showPlayerName": false
+    },
+    "game": {
+        "showStacksOnTheTable": false,
+        "showPlayerName": false,
+        "showHand": false,
+        "showHandCount": false,
+        "showDrawIfStuck": false,
+        "showOpponents": false
+    }
+}

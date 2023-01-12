@@ -19,6 +19,41 @@ import {
 } from "@colyseus/schema";
 import { Button, ToggleButton, ToggleButtonGroup } from "@mui/material";
 
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, onValue } from "firebase/database";
+
+// Initialize firebase real time database for UI configuration
+const firebaseConfig = {
+  databaseURL: "https://do-not-blink-id-default-rtdb.firebaseio.com/",
+};
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+// What is the game called
+// How do we play the game
+// First of all we needed to be in the same room
+// Rename Room to Table
+const defaultUIConfiguration = {
+  lobby: {
+    listExistingRooms: true,
+    showRoomNamePicker: true,
+    createButton: true, // Create room button
+    showPlayerName: false,
+  },
+  game: {
+    showStacksOnTheTable: false,
+    showPlayerName: false,
+    showHand: false,
+    showHandCount: false,
+    showDrawIfStuck: false,
+    showOpponents: false,
+  },
+};
+type UIConfiguration = typeof defaultUIConfiguration;
+
+// Print out to easily update the firebase database
+console.log(JSON.stringify(defaultUIConfiguration, null, 2));
+
 var randomEmoji = require("random-emoji");
 //const boopSfx = require("./../beep-01a.mp3");
 
@@ -85,6 +120,7 @@ export class MyRoomState extends Schema {
 
 interface RoomProps {
   thisPlayerIdentifier: string;
+  interfaceConfiguration: typeof defaultUIConfiguration.game;
   state: MyRoomState;
   tryPlayCard: (handIndex: number, tableStackIndex: number) => void;
   exitGame: () => void;
@@ -112,6 +148,17 @@ function Game() {
   // Creates a client that is connected to our server
   const client = useRef(new Client(clientAddress));
 
+  const [configuration, setConfiguration] = useState<UIConfiguration>(
+    defaultUIConfiguration
+  );
+  useEffect(() => {
+    onValue(ref(database), (snapshot) => {
+      const newConfiguration = snapshot.val();
+      console.table(newConfiguration);
+      setConfiguration({ ...newConfiguration });
+    });
+  }, []);
+
   const [availableRooms, setAvailableRooms] = useState<
     RoomAvailable<MyRoomState>[] | null
   >(null);
@@ -120,11 +167,7 @@ function Game() {
 
   useEffect(() => {
     setTimeout(() => {
-      console.log("getAvailableRooms");
       client.current.getAvailableRooms<MyRoomState>("my_room").then((rooms) => {
-        const metadata = rooms.at(0)?.metadata;
-        console.log(metadata);
-
         // const roomNames = rooms;
         // .filter((room) => {
         //   return (room.metadata as any).playerCount <= 2;
@@ -159,7 +202,7 @@ function Game() {
       .then(setRoom)
       .catch((error) => {
         window.alert(
-          "Error connecting, check that:\n1. You are connected to a hotspot, not LAUSD wifi\n2. Your browser says Not secure in the top left corner. If it doesnt, click on your URL to check and make sure your link starts with http://, NOT https://"
+          "Error connecting, check that:\nYou are connected to a hotspot, not LAUSD wifi\n"
         );
       });
   }, [roomName, playerName]);
@@ -169,7 +212,7 @@ function Game() {
     if (!inDevelopmentMode) {
       return;
     }
-    //joinOrCreateOnClick();
+    joinOrCreateOnClick();
   }, [joinOrCreateOnClick]);
 
   // Room state will be updated every time any player in the room makes a move
@@ -193,6 +236,7 @@ function Game() {
   if (roomState) {
     return (
       <RoomComponent
+        interfaceConfiguration={configuration.game}
         state={roomState}
         thisPlayerIdentifier={room.sessionId}
         tryPlayCard={(handIndex, tableStackIndex) => {
@@ -207,46 +251,58 @@ function Game() {
   } else {
     return (
       <>
-        <div style={{ margin: "3vh" }}>
-          Your browser should show "Not secure" on the top left in the address
-          bar. If it is not, raise your hand!
-        </div>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          {availableRooms &&
-            availableRooms.length !== 0 && [
-              <div>Existing rooms (click to join)</div>,
-              ...availableRooms.map((room, i) => {
-                const { name } = room.metadata;
-                return (
-                  <button
-                    key={i}
-                    onClick={() => {
-                      setRoomName(name);
-                      joinOrCreateOnClick();
-                    }}
-                  >
-                    {name}, players: {(room.metadata as any).playerCount}
-                  </button>
-                );
-              }),
-            ]}
-        </div>
-        <div>Room name:</div>
-        <input
-          value={roomName}
-          onChange={(e) => {
-            setRoomName(e.target.value);
-          }}
-        />
+        {/* List of available rooms */}
+        {configuration.lobby.listExistingRooms && (
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            {availableRooms &&
+              availableRooms.length !== 0 && [
+                <div>Existing rooms (click to join)</div>,
+                ...availableRooms.map((room, i) => {
+                  const { name } = room.metadata;
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => {
+                        setRoomName(name);
+                        joinOrCreateOnClick();
+                      }}
+                    >
+                      {name}, players: {(room.metadata as any).playerCount}
+                    </button>
+                  );
+                }),
+              ]}
+          </div>
+        )}
+
+        {/* Room name picker */}
+        {configuration.lobby.showRoomNamePicker && (
+          <>
+            <div>Room name:</div>
+            <input
+              value={roomName}
+              onChange={(e) => {
+                setRoomName(e.target.value);
+              }}
+            />
+          </>
+        )}
+
         {/* Player picker */}
-        <div>Your player is ${playerName}</div>
-        <Button
-          // Disable the button if room name or player is not picked
-          disabled={!roomName}
-          onClick={joinOrCreateOnClick}
-        >
-          Create
-        </Button>
+        {configuration.lobby.showPlayerName && (
+          <div>Your player is {playerName}</div>
+        )}
+
+        {/* Join or create room button */}
+        {configuration.lobby.createButton && (
+          <Button
+            // Disable the button if room name or player is not picked
+            disabled={!roomName}
+            onClick={joinOrCreateOnClick}
+          >
+            Create
+          </Button>
+        )}
       </>
     );
   }
@@ -254,9 +310,16 @@ function Game() {
 
 function RoomComponent(props: RoomProps) {
   const { name: roomName, players, stacks, winner } = props.state;
-  // const otherPlayers = Array(...players.values()).map((player) => {
-  //   return player.name;
-  // });
+  const {
+    showStacksOnTheTable,
+    showPlayerName,
+    showHand,
+    showHandCount,
+    showDrawIfStuck,
+    showOpponents,
+  } = props.interfaceConfiguration;
+
+  // Fort each used instead of map because the Colleseus framework doesn't support map
   let playerNames: string[] = [];
   players.forEach((player) => {
     playerNames.push(player.name);
@@ -323,42 +386,78 @@ function RoomComponent(props: RoomProps) {
   return (
     <>
       <h4 style={{ margin: "5vw" }}>Room {roomName}</h4>
-      <h4>Other players {playerNames.join(", ")}</h4>
-      <div>Stacks on the table</div>
-      <div style={{ display: "flex", justifyContent: "space-around" }}>
-        {stacks.map(({ deck }, index) => {
-          const topCard = deck.at(0);
-          return (
-            <CardComponent
-              key={index}
-              card={topCard}
-              selected={playToStackAtIndex === index}
-              onClick={() => setPlayToStackAtIndex(index)}
-            />
-          );
-        })}
-      </div>
-      <div style={{ height: "5vh" }}></div>
-      <div style={{ display: "flex", justifyContent: "space-around" }}>
-        {hand
-          .toArray()
-          .slice(0, visibleCount)
-          .map((card, index) => {
-            return (
-              <CardComponent
-                key={index}
-                card={card}
-                selected={playFromHandAtIndex === index}
-                onClick={() => setPlayFromHandAtIndex(index)}
-              />
-            );
-          })}
-      </div>
-      <h2 style={{ margin: "3vw" }}>Player: {playerName}</h2>
-      <h2 style={{ margin: "1vw" }}>Remaining 🃏s: {hand.length}</h2>
-      <button onClick={() => setvisibleCount(visibleCount + 1)}>
-        Draw (if all players are stuck)
-      </button>
+
+      {/* Opponents */}
+      {showOpponents && (
+        <>
+          <h4>Other players {playerNames.join(", ")}</h4>
+        </>
+      )}
+
+      {/* Table stacks */}
+      {showStacksOnTheTable && (
+        <>
+          <div>Stacks on the table</div>
+          <div style={{ display: "flex", justifyContent: "space-around" }}>
+            {stacks.map(({ deck }, index) => {
+              const topCard = deck.at(0);
+              return (
+                <CardComponent
+                  key={index}
+                  card={topCard}
+                  selected={playToStackAtIndex === index}
+                  onClick={() => setPlayToStackAtIndex(index)}
+                />
+              );
+            })}
+          </div>
+        </>
+      )}
+
+      {/* Hand */}
+      {showHand && (
+        <>
+          <div style={{ height: "5vh" }}></div>
+          <div style={{ display: "flex", justifyContent: "space-around" }}>
+            {hand
+              .toArray()
+              .slice(0, visibleCount)
+              .map((card, index) => {
+                return (
+                  <CardComponent
+                    key={index}
+                    card={card}
+                    selected={playFromHandAtIndex === index}
+                    onClick={() => setPlayFromHandAtIndex(index)}
+                  />
+                );
+              })}
+          </div>
+        </>
+      )}
+
+      {/* Player name */}
+      {showPlayerName && (
+        <>
+          <h2 style={{ margin: "3vw" }}>Player: {playerName}</h2>
+        </>
+      )}
+
+      {/* Cards to get rid of */}
+      {showHandCount && (
+        <>
+          <h2 style={{ margin: "1vw" }}>Remaining 🃏s: {hand.length}</h2>
+        </>
+      )}
+
+      {/* Unstuck controls */}
+      {showDrawIfStuck && (
+        <>
+          <button onClick={() => setvisibleCount(visibleCount + 1)}>
+            Draw (if all players are stuck)
+          </button>
+        </>
+      )}
     </>
   );
 }
