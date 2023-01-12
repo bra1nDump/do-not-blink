@@ -62,6 +62,7 @@ To run locally using Heroku `heroku local web --port 3000`
 ## School restricting access to the website
 
 At this point I don't remember why the school blocks the website, I'm assuming because it was not https.
+[Solved] It is my Mac that doesn't trust the website's certificate. LAUSD solution https://achieve.lausd.net/Page/11048 - installs a profile 
 [Key] Les be prepared to hotspot, make sure to test this out before presenting
 
 ## People get the link wrong

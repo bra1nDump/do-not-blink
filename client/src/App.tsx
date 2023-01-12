@@ -35,9 +35,9 @@ const database = getDatabase(app);
 // Rename Room to Table
 const defaultUIConfiguration = {
   lobby: {
-    listExistingRooms: true,
-    showRoomNamePicker: true,
-    createButton: true, // Create room button
+    listExistingRooms: false,
+    showRoomNamePicker: false,
+    createButton: false, // Create room button
     showPlayerName: false,
   },
   game: {
