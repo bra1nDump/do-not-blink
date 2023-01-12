@@ -17,5 +17,9 @@
   "bugs": {
     "url": "https://github.com/bra1nDump/do-not-blink/issues"
   },
-  "homepage": "https://github.com/bra1nDump/do-not-blink#readme"
+  "homepage": "https://github.com/bra1nDump/do-not-blink#readme",
+  "devDependencies": {
+    "@marp-team/marp-cli": "^2.3.0",
+    "chokidar-cli": "^3.0.0"
+  }
 }
