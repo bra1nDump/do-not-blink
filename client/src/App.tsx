@@ -187,8 +187,8 @@ function Game() {
   }, []);
 
   const [availableRooms, setAvailableRooms] = useState<
-    RoomAvailable<MyRoomState>[] | null
-  >(null);
+    RoomAvailable<MyRoomState>[]
+  >([]);
 
   const [triggerNewFetch, setTriggerNewFetch] = useState<number>(0);
 
@@ -208,26 +208,29 @@ function Game() {
   const [room, setRoom] = useState<Room<MyRoomState> | null>(null);
 
   // Called when 'Join or create room' is clicked
-  const joinOrCreateOnClick = useCallback(() => {
-    client.current
-      .joinOrCreate<MyRoomState>("my_room", {
-        roomName: generarateRandomEmojis(),
-        playerName,
-      })
-      .then(setRoom)
-      .catch((error) => {
-        window.alert(
-          "Error connecting, check that:\nYou are connected to a hotspot, not LAUSD wifi\n"
-        );
-      });
-  }, [roomName, playerName]);
+  const joinOrCreateOnClick = useCallback(
+    (roomName: string | undefined = undefined) => {
+      client.current
+        .joinOrCreate<MyRoomState>("my_room", {
+          roomName: roomName ?? generarateRandomEmojis(),
+          playerName,
+        })
+        .then(setRoom)
+        .catch((error) => {
+          window.alert(
+            "Error connecting, check that:\nYou are connected to a hotspot, not LAUSD wifi\n"
+          );
+        });
+    },
+    [roomName, playerName]
+  );
 
   // Immediately dropped into a room for debugging UI
   useEffect(() => {
     if (!inDevelopmentMode) {
       return;
     }
-    // joinOrCreateOnClick();
+    joinOrCreateOnClick();
   }, [joinOrCreateOnClick]);
 
   // Room state will be updated every time any player in the room makes a move
@@ -266,27 +269,32 @@ function Game() {
   } else {
     return (
       <>
+        <h2>Blink online multiplayer game</h2>
+        <a
+          target="_blank"
+          href="https://service.mattel.com/instruction_sheets/N1388-0920.pdf"
+          rel="noreferrer"
+        >
+          Game rules
+        </a>
+
         {/* List of available rooms */}
         {configuration.lobby.listExistingRooms && (
           <div style={{ display: "flex", flexDirection: "column" }}>
-            {availableRooms &&
-              availableRooms.length !== 0 && [
-                <div>Existing rooms (click to join)</div>,
-                ...availableRooms.map((room, i) => {
-                  const { name } = room.metadata;
-                  return (
-                    <button
-                      key={i}
-                      onClick={() => {
-                        setRoomName(name);
-                        joinOrCreateOnClick();
-                      }}
-                    >
-                      {name}, players: {(room.metadata as any).playerCount}
-                    </button>
-                  );
-                }),
-              ]}
+            {availableRooms.length === 0 && <h3>No rooms available</h3>}
+
+            {availableRooms.length > 0 && <h3>Open rooms</h3>}
+            {availableRooms.length > 0 && [
+              <div>Existing rooms (click to join)</div>,
+              ...availableRooms.map((room, i) => {
+                const { name } = room.metadata;
+                return (
+                  <button key={i} onClick={() => joinOrCreateOnClick(name)}>
+                    {name}, players: {(room.metadata as any).playerCount}
+                  </button>
+                );
+              }),
+            ]}
           </div>
         )}
 
@@ -304,18 +312,21 @@ function Game() {
         )}
 
         {/* Player picker */}
-        {configuration.lobby.showPlayerName && (
+        {/* We don't need a player picker anymore now that we create random names */}
+        {/* {configuration.lobby.showPlayerName && (
           <div>Your player is {playerName}</div>
-        )}
+        )} */}
 
         {/* Join or create room button */}
         {configuration.lobby.createButton && (
           <Button
             // Disable the button if room name or player is not picked
             // disabled={!roomName}
-            onClick={joinOrCreateOnClick}
+            // Gray hex color partially transparent is #80808099
+            onClick={() => joinOrCreateOnClick()}
+            style={{ marginTop: 10, backgroundColor: "#80808099" }}
           >
-            Create
+            Create a room
           </Button>
         )}
       </>
@@ -326,9 +337,9 @@ function Game() {
 function RoomComponent(props: RoomProps) {
   const { name: roomName, startDate, players, stacks, winner } = props.state;
 
-  const secondsUntilStart = new Date(
-    startDate - new Date().getTime()
-  ).getSeconds();
+  const secondsUntilStart = Math.floor(
+    (startDate - new Date().getTime()) / 1000
+  );
   const isStarted = secondsUntilStart < 0;
 
   const {
@@ -349,10 +360,6 @@ function RoomComponent(props: RoomProps) {
   const { name: playerName, deck: hand } = players.get(
     props.thisPlayerIdentifier
   );
-
-  // playerNamesAndCardsRemaining = playerNamesAndCardsRemaining.filter(
-  //   (name) => name !== playerName
-  // );
 
   const [visibleCount, setvisibleCount] = useState(3);
   const [playFromHandAtIndex, setPlayFromHandAtIndex] = useState<number | null>(
@@ -477,11 +484,10 @@ function RoomComponent(props: RoomProps) {
       {/* Player name */}
       {showPlayerName && (
         <>
-          <h2 style={{ margin: "3vw" }}>
-            Player: {playerName}
-            {", "}
-            {showHandCount && `🃏s remaining: ${hand.length}`}
-          </h2>
+          <h4 style={{ marginBlockEnd: 0 }}>Your username: {playerName}</h4>
+          <h4 style={{ marginBlockEnd: 0 }}>
+            {showHandCount && `Remaining 🃏: ${hand.length}`}
+          </h4>
         </>
       )}
 

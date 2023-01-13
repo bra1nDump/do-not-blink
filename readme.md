@@ -24,7 +24,14 @@ http://localhost:3000/presentation.html - Presentation
 
 # Develop
 
-- Start server and cline separately, client has automatic reloading using react scripts
+- Start server and client separately, client has automatic reloading using react scripts
+- [Pro tip] Instead of using launch to use vscode debugger - use attach configuration in launch.json. This allows to re-use existing chrome window (I think?)
+  - https://www.freecodecamp.org/news/how-to-set-up-the-debugger-for-chrome-extension-in-visual-studio-code-c0b3e5937c01/
+  - For this you need to start chrome with debugging port opened `open -a Google\ Chrome --args --remote-debugging-port=9222`
+  - I just gave up and used launch configuration
+
+## Troubleshooting debugger
+This is an archived extension and now part of VSCode, still has useful debugging tips https://github.com/microsoft/vscode-chrome-debug#cannot-connect-to-the-target-connect-econnrefused-1270019222
 
 # Structure
 
@@ -138,6 +145,14 @@ Each area and part of the process requires special knowledge, but at all starts 
 
 # To Do
 
+- Fix bug with not being able to join the room with the selected name.
+  - Not sure why, but seems like it got more severe after we added random room name generation
+  - Also this doesnt reproduce always. 
+  - The root cause seems to be the React way of updating. We join a room with a name clicked by 
+    - setName(name) (a hook)
+    - joinRoom() (a useCallback hook)
+    - When join room is called we actually don't have the latest name, because the hook is async and
+    - The solution is to provide the join callback with a room name arg
 - Rank other playrs by how many cards they have left
 - Show count of remaining cards for each player
 
